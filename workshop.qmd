@@ -476,26 +476,47 @@ airxp_sub |>
 It is common for a user to visualize data with a heatmap. We can create a function that will cluster the rows and columns of a summarized expeirment based on the values in a given assay name.
 
 ```{r}
-cluster_xp <- function(xp, assay) {
+cluster_xp <- function(xp, assay, rows_k = NULL, cols_k = NULL) {
   assay_val <- pull(xp, {{ assay }})
   row_hc <- hclust(dist(assay_val))
   col_hc <- hclust(dist(t(assay_val)))
-  xp |>
+  ## apply a function on the metadata
+  xp <- plyxp_on(xp, .on = metadata, \(md) {
+    md$row_hc <- row_hc
+    md$col_hc <- col_hc
+    md
+  })
+
+  xp <- xp |>
    mutate(
      rows(features = factor(.features, levels = .features[row_hc$order])),
      cols(samples  = factor(.samples,  levels = .samples[col_hc$order]))
    )
+  if (!is.null(rows_k)) {
+    xp <- xp |>
+      group_by(rows(row_cluster = factor(cutree(row_hc, k = rows_k))),
+        .add = TRUE)
+  }
+  if (!is.null(cols_k)) {
+    xp <- xp |>
+      group_by(cols(col_cluster = factor(cutree(col_hc, k = cols_k))),
+        .add = TRUE)
+  }
+  xp
 }
 ```
 
 ```{r}
 airxp_sub |>
   filter(rows(gene_id %in% top_100_genes)) |>
-  cluster_xp(counts) |>
+  cluster_xp(counts, rows_k = 4, cols_k = 3) |>
   se() |>
   ggplot(aes(x = samples, y = features, fill = log1p(counts))) +
   geom_tile() +
-  guides(x = guide_axis(angle = 45))
+  viridis::scale_fill_viridis() +
+  guides(x = guide_axis(angle = 45)) +
+  facet_grid(rows = vars(row_cluster),
+   cols = vars(col_cluster), scales = "free", space = "free")
 
 ```
 
