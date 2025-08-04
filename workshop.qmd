@@ -1,0 +1,522 @@
+---
+title: "Tidyomics Workshop: Genomics Analysis"
+---
+
+::: callout-note
+# Notes from Mike
+
+-   take moments to get the class in sync. "everyone subset the object to contain only XXX samples/features"
+:::
+
+# The Outline
+
+-   What is Bioconductor
+    -   Brief intro to S4
+        -   S4 is one of the *many* frameworks for object-oriented programming in R.
+        -   S4 is the most common framework used in Bioconductor.
+        -   S4 provides a way to define formal classes for generic methods.
+        -   There are 2 types of packages you may find in Bioconductor:
+            -   Software Packages: These packages provide data structures and analysis tools for biological data.
+            -   Data Packages: These packages provide curated datasets for use in analysis.
+    -   Why `SummarizedExperiment` (SE)
+        -   SE has become the de facto standard in Bioconductor for storing matrix-like data.
+        -   SE provides a compressed format for organizing some outer product of two variables. The most typical being features (rows) and samples (columns).
+        -   SE provides additional metadata annotations for both rows and columns, allowing for more complex data structures.
+-   What is `tidyomics`
+    -   Brief background on `tidyverse`
+        -   The `tidyverse` is a collection of R packages designed for data science, providing a consistent and user-friendly interface for data manipulation, visualization, and analysis.
+        -   Most common packages include `dplyr`, `ggplot2`, and `tidyr`.
+    -   Motivation for `tidyomics`
+-   Using `tidyomics` for *XYZ* Dataset
+    -   Basics of using `tidySE`
+        -   `tidySE` is a package that provides a tidyverse interface for manipulating `SummarizedExperiment` objects.
+        -   It allows you to use `dplyr` functions on `SummarizedExperiment` objects, making it easier to work with complex genomic data.
+            -   It also implements extensions for more than just `dplyr` functions, such as `ggplot2` and `tidyr`.
+    -   implementation may vary depending on extended classes. Note difference between `tidySE` vs `tidySCE`.
+    -   include links to zulip channels/githubs for development of new types such as `tidySpacialExperiment` and `tidySCE`. <!-- unsure about tidySpacialExperiment - maybe I should do some research first -->
+        -   At some point introduce `plyxp` as a complementary package to `tidySE`??
+            -   `plyxp` only reimagines `dplyr` syntax for SE objects.
+
+## Introduction
+
+Welcome to the Tidyomics workshop! We will be exploring how to use `tidyomics` to perform common operations for analysis and visualization of genomics data.
+
+Before we dive into the details, we will first talk about Bioconductor, the `tidyverse` and its connection to the `tidyomics` project.
+
+## What is Bioconductor?
+
+Bioconductor is an open-source project that provides tools for the analysis and comprehension of high-throughput genomic data.
+
+Bioconductor hosts many R packages that will generally fall into two categories:
+
+-   Software Packages: These packages provide data structures and analysis tools for biological data.
+-   Data Packages: These packages provide curated datasets for use in analysis.
+
+## The S4 System
+
+S4 is one of the many frameworks for object-oriented (OO) programming in R. It is the most common framework used in Bioconductor.
+
+S4 is admittedly more complex than R's simplest OO system S3. The main advantages of S4 over S3 are:
+
+-   standard generics with multiple dispatch
+-   formal classes with enforced type checking / validation
+-   Classes with multiple inheritance
+
+S4 provides a way to define formal classes for generic methods, allowing for more complex data structures and methods.
+
+## The S4 System: API Best Practice
+
+The structure of an S4 object is defined by its slots (or attributes). While you ***can*** use the `@` operator to access these slots, it is not recommended.
+
+Instead, you should use the associated accessor functions for these slots, which are typically exported with the package.
+
+At Bioconductor, the internal structure of the S4 object is subject to change, and thus the `@` operator is not considered a stable way to access data.
+
+## The S4 System: SummarizedExperiment (SE)
+
+The `SummarizedExperiment` (SE) class is a powerful and popular data structure in Bioconductor, and parallels the `anndata` object in Python.
+
+At its core, the SE stores matrix-like data in the form of "assays".
+
+The SE class has become the de facto standard in Bioconductor for storing matrix-like data, and is used by many packages.
+
+```{r SE-overview, fig.align = 'center', out.width = "100%"}
+#| echo: false
+#| fig.cap: "Source: SummarizedExperiment [vignette](https://www.bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)"
+knitr::include_graphics("figures/SE-overview.png")
+```
+
+::: callout-note
+### important
+
+SE is widely used, but its functionality stems from other Bioconductor packages. A notable mention is `S4Vectors`:
+
+-   provides a way to indicate your S4 object is "vector-like" (with the `Vector` virtual class) even if the underlying storage is not a vector.
+-   provides a notation of size and subset generics.
+-   provides a DFrame object. Like a data.frame, but columns can be any object inheriting from `Vector` (e.g. `GRanges`, `Rle`, etc.).
+:::
+
+## What is the `tidyverse`?
+
+The `tidyverse` is a collection of R packages that specialize in providing users with consistant APIs for handeling their data.
+A non-exhaustive list of common `tidyverse` packages include `dplyr`, `tidyr`, and `ggplot2`.
+Each `tidyverse` package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.
+
+<!-- Include more examples of tidy data? -->
+
+## What is `tidyomics`?
+
+Like the `tidyverse`, the `tidyomics` project aims to bring the philosolpy of the `tidyverse` to the Omics focused packages within Bioconductor.
+
+-   <https://github.com/tidyomics>
+-   [Announcement paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2)
+-   `#tidiness_in_bioc` channel in the `community-bioc` Zulip
+
+```{r tidyomics workflow goal}
+#| echo: false
+#| fig.cap: Diagram of how packages share a similar grammar
+knitr::include_graphics("figures/tidyomics-workflow.png")
+```
+
+## A brief overview of `tidyomics` in practice
+
+Like the `tidyverse`, `tidyomics` hosts many packages, and all of them aim to bring some "tidyverse" functionality to a Bioconductor package.
+
+For example, `tidySummarizedExperiment` defines methods from `dplyr`, `tidyr`, and `ggplot2` for the SummarizedExperiment class, allowing users to think about their SummarizedExperiment classes as a "long-form data.frame".
+
+Alternatively, some `tidyomics` packages will opt to only extend a niche part of the tidyverse.
+Such is the case for `plyranges` and `plyxp`, which focus on defining methods for `dplyr` for the `GenomicsRanges` and `SummarizedExperiment` packages respectively.
+
+## What is "Tidy" Data?
+
+```{r tidy_style, echo=FALSE, fig.align = 'center', out.width = "100%", fig.cap = "Source: Hadley Wickham’s R for Data Science, 1st Edition"}
+knitr::include_graphics("figures/tidy-style.png")
+```
+
+-   One row per observation, one column per variable.
+-   Genomic regions (BED) already in this format.
+-   [Matrices and annotated matrices are not]{.underline}.
+
+## SummarizedExperiments
+
+```{r library SummarizedExpierment}
+#| message: false
+library(SummarizedExperiment)
+set.seed(123) # some random count data
+```
+
+```{r create simple counts}
+#| echo: true
+counts <- matrix(
+  rpois(16, lambda=100), ncol=4,
+  dimnames=list(c("g1","g2","g3","g4"),
+                c("s1","s2","s3","s4"))
+)
+counts
+```
+
+## Row data and column data
+
+metadata about genes (rows)
+
+```{r create simple rowdata}
+genes <- DataFrame(
+  id = c("g1","g2","g3","g4"),
+  symbol = c("ABC","DEF","GHI","JKL")
+)
+genes
+```
+
+metadata about samples (columns)
+
+```{r create simple coldata}
+samples <- DataFrame(
+  sample = c("s1","s2","s3","s4"),
+  condition = c("x","y","x","y"),
+  sex = c("m","m","f","f")
+)
+samples
+```
+
+## Assembled object
+
+```{r create SE}
+se <- SummarizedExperiment(
+  assays = list(counts = counts),
+  rowData = genes,
+  colData = samples,
+  metadata = list(organism="Hsapiens")
+)
+se
+```
+
+## Deals with bookkeeping issues
+
+Reordering columns propagates to `assay` and `colData`:
+
+```{r reorder SE}
+#| echo: true
+se2 <- se[,c(1,3,2,4)]
+assay(se2, "counts")
+colData(se2)
+```
+
+## Deals with bookkeeping issues
+
+Assignment with conflicting metadata gives an error:
+
+```{r assignment failure bookeeping}
+#| echo: true
+#| eval: false
+assay(se2) <- counts
+# Error in `assays<-`:
+# please use 'assay(x, withDimnames=FALSE)) <- value' or
+# 'assays(x, withDimnames=FALSE)) <- value'
+# when the rownames or colnames of the supplied assay(s) are not
+# identical to those of the receiving  SummarizedExperiment object 'x'
+```
+
+-   Other such validity checks include comparison across *different
+    genome builds*.
+
+-   Errors triggered by metadata better than silent errors!
+
+## Can be hard for new users
+
+```{r show slots and methods}
+#| echo: true
+slotNames(se)
+methods(class = class(se)) |> head()
+```
+
+-   An advanced R/Bioconductor user should eventually learn these
+    methods, class/method inheritance.
+
+-   Not needed to explore or visualize data, or make basic data
+    summaries.
+
+
+## Beginners know *dplyr* & *ggplot2*
+
+```{r load dplyr}
+#| echo: true
+#| message: false
+library(dplyr)
+# filter to samples in condition 'x'
+samples |>
+  as_tibble() |>
+  filter(condition == "x")
+```
+
+## Enabling *dplyr* verbs for omics
+
+-   *tidySummarizedExperiment* package from Mangiola *et al.*
+
+-   Printing says: "*SummarizedExperiment-tibble abstraction*"
+
+```{r load tidySE}
+#| echo: true
+#| message: false
+library(tidySummarizedExperiment)
+se
+```
+
+If you prefer for the old S4 `show` method to be used:
+
+```{r unset tidySE show}
+options("restore_SummarizedExperiment_show" = TRUE)
+se
+```
+
+::: callout-note
+calling `print(se)` even after restoring `show()` will still use the "tibble-abstraction"!
+:::
+
+## The API
+
+```{r simple tidySE}
+#| echo: true
+se2 <- se |>
+  filter(condition == "x")
+
+se2
+colData(se2)
+```
+
+## Facilitates quick exploration
+
+```{r set ggplot2 theme}
+#| message: false
+#| echo: false
+library(ggplot2)
+theme_set(theme_grey(base_size = 16))
+```
+
+```{r ggplot}
+#| message: false
+#| echo: true
+#| fig-align: center
+library(ggplot2)
+se |>
+  filter(.feature %in% c("g1","g2")) |> # `.feature` a special name
+  ggplot(aes(condition, counts, color=sex, group=sex)) +
+  geom_point(size=2) + geom_line() + facet_wrap(~.feature)
+```
+
+## Efficient operation on SE with `plyxp`
+
+-   Justin Landis (UNC BCB) noticed some opportunities for more
+    efficient operations.
+
+-   Also, reduce ambiguity, allow multiple ways to access data across
+    context. Leveraging data masks from *rlang*.
+
+-   Developed in Summer 2024: `plyxp`, stand-alone but also as a
+    *tidySummarizedExperiment* engine.
+
+![](figures/plyxp.png){fig-align="center"}
+
+## To use `plyxp`
+
+Start by wraping any class inheriting from `SummarizedExperiment` with `plyxp`'s thin wrapper class:
+
+```{r load and use plyxp}
+#| message: false
+#| warning: false
+library(plyxp)
+xp <- new_plyxp(se)
+xp |> class() |> getClass()
+```
+
+::::: callout-note
+
+:::: columns
+
+::: {.column width="40%"}
+Unlike `tidySummarizedExperiment`, `plyxp` only extends `dplyr`. Thus you cannot pipe output from `plyxp` into `tidyr` or `ggplot2` ([*yet*]{.underline}). However you can always retrieve the underlying `SummarizedExperiment` object via the `se()` function.
+:::
+
+::: {.column width="60%"}
+```{r plyxp get se}
+se(xp)
+```
+:::
+::::
+:::::
+
+## Using `plyxp`
+
+`plyxp` is a stricter version of `tidySummarizedExperiment`.
+It's grammar reinforces the underlying structure of the `SummarizedExperiment` class.
+It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.
+
+![A SummarizedExperiment has three evaluation contexts: the assays, rowData, and colData. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object and its bindings to three evaluation contexts: the assays, row-data, and col-data."}
+
+## Using `plyxp` cont.
+
+`plyxp` allows optional access into the other contexts with special [**pronouns**]{.underline}.
+These will reshape the data for something convenient for the current context.
+There also exists special **\_asis** variants that do not reshape the data.
+
+![Each context contains special pronouns that point to the other contexts. The special **\_asis** variants are not shown here. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object's three evaluation contexts and the pronouns within."}
+
+## The Airway dataset
+
+Read counts from an RNA-seq experiment of airway smooth muscle cell lines.
+This is a `RangedSummarizedExperiment` which indicates genomic ranges are used.
+
+```{r load airway}
+library(airway)
+data(airway)
+airway
+```
+
+The columns are our 8 samples, and the rows are the genes.
+
+```{r show airway metadata}
+rowRanges(airway)  # pipe this output to mcols() for more data!
+colData(airway)
+```
+
+::: callout-note
+We would typically use `rowData()`, but with a `RangedSummarizedExperiment` we should use `rowRanges()` if we want to query the information about the range data.
+:::
+
+
+## airway with `plyxp`
+
+
+```{r}
+airxp <- new_plyxp(airway)
+airxp
+
+airxp |>
+  se() |>
+  ggplot(aes(x = cell, y = log1p(counts), fill = dex)) +
+  geom_boxplot() +
+  guides(x = guide_axis(angle = 45))
+```
+
+A common operation is to calculate the RPKM (Reads Per Kilobase of transcript, per Million mapped reads) or TPM (Transcripts Per Million) values for each gene in each sample.
+
+```{r}
+airxp <- airxp |>
+  mutate(
+    rows(
+      # get a gene length per gene
+      len = gene_seq_end - gene_seq_start + 1
+    ),
+    # calculate RPKM per gene and sample count
+    RPK = counts / (.rows$len / 1e3),
+    cols(
+      # calculate a scaling factor for each sample
+      scale_factor = colSums(.assays_asis$RPK) / 1e6
+    ),
+    # scale TMP by scaling factor
+    TPM = RPK / .cols$scale_factor,
+    rows(gene_scaled_means = rowMeans(.assays_asis$TPM))
+  )
+
+```
+
+
+```{r}
+airxp_sub <- airxp |>
+  filter(
+    rows(
+      # only investigate protein coding genes
+      gene_biotype == "protein_coding",
+      # retain genes whose counts across all samples is non-zero
+      gene_scaled_means > 5
+    )
+  )
+airxp_sub
+airxp_sub |>
+  se() |>
+  ggplot(aes(x = cell, y = log1p(counts), fill = dex)) +
+  geom_boxplot() +
+  guides(x = guide_axis(angle = 45))
+```
+
+Attempt to find the top 100 genes that have the greatest change between "trt" and "untrt" within each cell.
+
+```{r}
+top_100_genes <- airxp_sub |>
+  group_by(
+    # do not need to group_by rows(gene_id) ...
+    # this will create ~ 17,000 additional groups per row!
+    # instead we can choose to only split by the columns and
+    # use vectorized functions
+    cols(cell)
+  ) |>
+  summarize(
+    # use the `.cols$dex` metadata vector to index the `counts`
+    abs_diff = abs(counts[.cols$dex=="trt"] - counts[.cols$dex=="untrt"]),
+    cols(.samples = unique(cell))
+  ) |>
+  mutate(
+    # for each gene, find the mean absolute diff across
+    # all cells
+    rows(ave = rowMeans(.assays_asis$abs_diff))
+  ) |>
+  arrange(rows(-ave)) |>
+  plyxp(\(x) x[1:100,]) |>
+  pull(rows(gene_id))
+```
+
+```{r}
+airxp_sub |>
+  filter(rows(gene_id %in% top_100_genes)) |>
+  se() |>
+  ggplot(aes(x = cell, y = log1p(counts), fill = dex)) +
+  geom_boxplot() +
+  guides(x = guide_axis(angle = 45))
+```
+
+It is common for a user to visualize data with a heatmap. We can create a function that will cluster the rows and columns of a summarized expeirment based on the values in a given assay name.
+
+```{r}
+cluster_xp <- function(xp, assay) {
+  assay_val <- pull(xp, {{ assay }})
+  row_hc <- hclust(dist(assay_val))
+  col_hc <- hclust(dist(t(assay_val)))
+  xp |>
+   mutate(
+     rows(features = factor(.features, levels = .features[row_hc$order])),
+     cols(samples  = factor(.samples,  levels = .samples[col_hc$order]))
+   )
+}
+```
+
+```{r}
+airxp_sub |>
+  filter(rows(gene_id %in% top_100_genes)) |>
+  cluster_xp(counts) |>
+  se() |>
+  ggplot(aes(x = samples, y = features, fill = log1p(counts))) +
+  geom_tile() +
+  guides(x = guide_axis(angle = 45))
+
+```
+
+```{r}
+airxp_sub |>
+  filter(rows(gene_id %in% top_100_genes)) |>
+  cluster_xp(TPM) |>
+  se() |>
+  ggplot(aes(x = samples, y = features, fill = log1p(TPM))) +
+  geom_tile() +
+  guides(x = guide_axis(angle = 45))
+
+```
+
+
+```{r}
+
+airxp_sub |>
+  se() |>
+  ggplot(aes(x = cell, y = log1p(TPM), fill = dex)) +
+  geom_boxplot() +
+  guides(x = guide_axis(angle = 45))
+
+```

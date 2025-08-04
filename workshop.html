@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Tidyomics Workshop: Genomics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="workshop_files/libs/clipboard/clipboard.min.js"></script>
+<script src="workshop_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="workshop_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="workshop_files/libs/quarto-html/popper.min.js"></script>
+<script src="workshop_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="workshop_files/libs/quarto-html/anchor.min.js"></script>
+<link href="workshop_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="workshop_files/libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="workshop_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="workshop_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="workshop_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Tidyomics Workshop: Genomics Analysis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notes from Mike
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>take moments to get the class in sync. “everyone subset the object to contain only XXX samples/features”</li>
+</ul>
+</div>
+</div>
+<section id="the-outline" class="level1">
+<h1>The Outline</h1>
+<ul>
+<li>What is Bioconductor
+<ul>
+<li>Brief intro to S4
+<ul>
+<li>S4 is one of the <em>many</em> frameworks for object-oriented programming in R.</li>
+<li>S4 is the most common framework used in Bioconductor.</li>
+<li>S4 provides a way to define formal classes for generic methods.</li>
+<li>There are 2 types of packages you may find in Bioconductor:
+<ul>
+<li>Software Packages: These packages provide data structures and analysis tools for biological data.</li>
+<li>Data Packages: These packages provide curated datasets for use in analysis.</li>
+</ul></li>
+</ul></li>
+<li>Why <code>SummarizedExperiment</code> (SE)
+<ul>
+<li>SE has become the de facto standard in Bioconductor for storing matrix-like data.</li>
+<li>SE provides a compressed format for organizing some outer product of two variables. The most typical being features (rows) and samples (columns).</li>
+<li>SE provides additional metadata annotations for both rows and columns, allowing for more complex data structures.</li>
+</ul></li>
+</ul></li>
+<li>What is <code>tidyomics</code>
+<ul>
+<li>Brief background on <code>tidyverse</code>
+<ul>
+<li>The <code>tidyverse</code> is a collection of R packages designed for data science, providing a consistent and user-friendly interface for data manipulation, visualization, and analysis.</li>
+<li>Most common packages include <code>dplyr</code>, <code>ggplot2</code>, and <code>tidyr</code>.</li>
+</ul></li>
+<li>Motivation for <code>tidyomics</code></li>
+</ul></li>
+<li>Using <code>tidyomics</code> for <em>XYZ</em> Dataset
+<ul>
+<li>Basics of using <code>tidySE</code>
+<ul>
+<li><code>tidySE</code> is a package that provides a tidyverse interface for manipulating <code>SummarizedExperiment</code> objects.</li>
+<li>It allows you to use <code>dplyr</code> functions on <code>SummarizedExperiment</code> objects, making it easier to work with complex genomic data.
+<ul>
+<li>It also implements extensions for more than just <code>dplyr</code> functions, such as <code>ggplot2</code> and <code>tidyr</code>.</li>
+</ul></li>
+</ul></li>
+<li>implementation may vary depending on extended classes. Note difference between <code>tidySE</code> vs <code>tidySCE</code>.</li>
+<li>include links to zulip channels/githubs for development of new types such as <code>tidySpacialExperiment</code> and <code>tidySCE</code>. <!-- unsure about tidySpacialExperiment - maybe I should do some research first -->
+<ul>
+<li>At some point introduce <code>plyxp</code> as a complementary package to <code>tidySE</code>??
+<ul>
+<li><code>plyxp</code> only reimagines <code>dplyr</code> syntax for SE objects.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Welcome to the Tidyomics workshop! We will be exploring how to use <code>tidyomics</code> to perform common operations for analysis and visualization of genomics data.</p>
+<p>Before we dive into the details, we will first talk about Bioconductor, the <code>tidyverse</code> and its connection to the <code>tidyomics</code> project.</p>
+</section>
+<section id="what-is-bioconductor" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-bioconductor">What is Bioconductor?</h2>
+<p>Bioconductor is an open-source project that provides tools for the analysis and comprehension of high-throughput genomic data.</p>
+<p>Bioconductor hosts many R packages that will generally fall into two categories:</p>
+<ul>
+<li>Software Packages: These packages provide data structures and analysis tools for biological data.</li>
+<li>Data Packages: These packages provide curated datasets for use in analysis.</li>
+</ul>
+</section>
+<section id="the-s4-system" class="level2">
+<h2 class="anchored" data-anchor-id="the-s4-system">The S4 System</h2>
+<p>S4 is one of the many frameworks for object-oriented (OO) programming in R. It is the most common framework used in Bioconductor.</p>
+<p>S4 is admittedly more complex than R’s simplest OO system S3. The main advantages of S4 over S3 are:</p>
+<ul>
+<li>standard generics with multiple dispatch</li>
+<li>formal classes with enforced type checking / validation</li>
+<li>Classes with multiple inheritance</li>
+</ul>
+<p>S4 provides a way to define formal classes for generic methods, allowing for more complex data structures and methods.</p>
+</section>
+<section id="the-s4-system-api-best-practice" class="level2">
+<h2 class="anchored" data-anchor-id="the-s4-system-api-best-practice">The S4 System: API Best Practice</h2>
+<p>The structure of an S4 object is defined by its slots (or attributes). While you <strong><em>can</em></strong> use the <code>@</code> operator to access these slots, it is not recommended.</p>
+<p>Instead, you should use the associated accessor functions for these slots, which are typically exported with the package.</p>
+<p>At Bioconductor, the internal structure of the S4 object is subject to change, and thus the <code>@</code> operator is not considered a stable way to access data.</p>
+</section>
+<section id="the-s4-system-summarizedexperiment-se" class="level2">
+<h2 class="anchored" data-anchor-id="the-s4-system-summarizedexperiment-se">The S4 System: SummarizedExperiment (SE)</h2>
+<p>The <code>SummarizedExperiment</code> (SE) class is a powerful and popular data structure in Bioconductor, and parallels the <code>anndata</code> object in Python.</p>
+<p>At its core, the SE stores matrix-like data in the form of “assays”.</p>
+<p>The SE class has become the de facto standard in Bioconductor for storing matrix-like data, and is used by many packages.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/SE-overview.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Source: SummarizedExperiment <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">vignette</a></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SE is widely used, but its functionality stems from other Bioconductor packages. A notable mention is <code>S4Vectors</code>:</p>
+<ul>
+<li>provides a way to indicate your S4 object is “vector-like” (with the <code>Vector</code> virtual class) even if the underlying storage is not a vector.</li>
+<li>provides a notation of size and subset generics.</li>
+<li>provides a DFrame object. Like a data.frame, but columns can be any object inheriting from <code>Vector</code> (e.g.&nbsp;<code>GRanges</code>, <code>Rle</code>, etc.).</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="what-is-the-tidyverse" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-the-tidyverse">What is the <code>tidyverse</code>?</h2>
+<p>The <code>tidyverse</code> is a collection of R packages that specialize in providing users with consistant APIs for handeling their data. A non-exhaustive list of common <code>tidyverse</code> packages include <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code>. Each <code>tidyverse</code> package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.</p>
+<!-- Include more examples of tidy data? -->
+</section>
+<section id="what-is-tidyomics" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-tidyomics">What is <code>tidyomics</code>?</h2>
+<p>Like the <code>tidyverse</code>, the <code>tidyomics</code> project aims to bring the philosolpy of the <code>tidyverse</code> to the Omics focused packages within Bioconductor.</p>
+<ul>
+<li><a href="https://github.com/tidyomics" class="uri">https://github.com/tidyomics</a></li>
+<li><a href="https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2">Announcement paper</a></li>
+<li><code>#tidiness_in_bioc</code> channel in the <code>community-bioc</code> Zulip</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/tidyomics-workflow.png" class="img-fluid figure-img" width="1050"></p>
+<figcaption>Diagram of how packages share a similar grammar</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="a-brief-overview-of-tidyomics-in-practice" class="level2">
+<h2 class="anchored" data-anchor-id="a-brief-overview-of-tidyomics-in-practice">A brief overview of <code>tidyomics</code> in practice</h2>
+<p>Like the <code>tidyverse</code>, <code>tidyomics</code> hosts many packages, and all of them aim to bring some “tidyverse” functionality to a Bioconductor package.</p>
+<p>For example, <code>tidySummarizedExperiment</code> defines methods from <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code> for the SummarizedExperiment class, allowing users to think about their SummarizedExperiment classes as a “long-form data.frame”.</p>
+<p>Alternatively, some <code>tidyomics</code> packages will opt to only extend a niche part of the tidyverse. Such is the case for <code>plyranges</code> and <code>plyxp</code>, which focus on defining methods for <code>dplyr</code> for the <code>GenomicsRanges</code> and <code>SummarizedExperiment</code> packages respectively.</p>
+</section>
+<section id="what-is-tidy-data" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-tidy-data">What is “Tidy” Data?</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/tidy-style.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Source: Hadley Wickham’s R for Data Science, 1st Edition</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>One row per observation, one column per variable.</li>
+<li>Genomic regions (BED) already in this format.</li>
+<li><u>Matrices and annotated matrices are not</u>.</li>
+</ul>
+</section>
+<section id="summarizedexperiments" class="level2">
+<h2 class="anchored" data-anchor-id="summarizedexperiments">SummarizedExperiments</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'GenomeInfoDb' was built under R version 4.5.1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># some random count data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rpois</span>(<span class="dv">16</span>, <span class="at">lambda=</span><span class="dv">100</span>), <span class="at">ncol=</span><span class="dv">4</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    s1  s2  s3  s4
+g1  94 117 112  94
+g2 111 104 103 112
+g3  83  87 104 108
+g4 101  82 101  99</code></pre>
+</div>
+</div>
+</section>
+<section id="row-data-and-column-data" class="level2">
+<h2 class="anchored" data-anchor-id="row-data-and-column-data">Row data and column data</h2>
+<p>metadata about genes (rows)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>), </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="fu">c</span>(<span class="st">"ABC"</span>,<span class="st">"DEF"</span>,<span class="st">"GHI"</span>,<span class="st">"JKL"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>genes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 4 rows and 2 columns
+           id      symbol
+  &lt;character&gt; &lt;character&gt;
+1          g1         ABC
+2          g2         DEF
+3          g3         GHI
+4          g4         JKL</code></pre>
+</div>
+</div>
+<p>metadata about samples (columns)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="fu">c</span>(<span class="st">"x"</span>,<span class="st">"y"</span>,<span class="st">"x"</span>,<span class="st">"y"</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">c</span>(<span class="st">"m"</span>,<span class="st">"m"</span>,<span class="st">"f"</span>,<span class="st">"f"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>samples</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 4 rows and 3 columns
+       sample   condition         sex
+  &lt;character&gt; &lt;character&gt; &lt;character&gt;
+1          s1           x           m
+2          s2           y           m
+3          s3           x           f
+4          s4           y           f</code></pre>
+</div>
+</div>
+</section>
+<section id="assembled-object" class="level2">
+<h2 class="anchored" data-anchor-id="assembled-object">Assembled object</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">SummarizedExperiment</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">assays =</span> <span class="fu">list</span>(<span class="at">counts =</span> counts),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">rowData =</span> genes, </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">colData =</span> samples,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metadata =</span> <span class="fu">list</span>(<span class="at">organism=</span><span class="st">"Hsapiens"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class: SummarizedExperiment 
+dim: 4 4 
+metadata(1): organism
+assays(1): counts
+rownames(4): g1 g2 g3 g4
+rowData names(2): id symbol
+colnames(4): s1 s2 s3 s4
+colData names(3): sample condition sex</code></pre>
+</div>
+</div>
+</section>
+<section id="deals-with-bookkeeping-issues" class="level2">
+<h2 class="anchored" data-anchor-id="deals-with-bookkeeping-issues">Deals with bookkeeping issues</h2>
+<p>Reordering columns propagates to <code>assay</code> and <code>colData</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se2 <span class="ot">&lt;-</span> se[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">4</span>)]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se2, <span class="st">"counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    s1  s3  s2  s4
+g1  94 112 117  94
+g2 111 103 104 112
+g3  83 104  87 108
+g4 101 101  82  99</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(se2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 4 rows and 3 columns
+        sample   condition         sex
+   &lt;character&gt; &lt;character&gt; &lt;character&gt;
+s1          s1           x           m
+s3          s3           x           f
+s2          s2           y           m
+s4          s4           y           f</code></pre>
+</div>
+</div>
+</section>
+<section id="deals-with-bookkeeping-issues-1" class="level2">
+<h2 class="anchored" data-anchor-id="deals-with-bookkeeping-issues-1">Deals with bookkeeping issues</h2>
+<p>Assignment with conflicting metadata gives an error:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se2) <span class="ot">&lt;-</span> counts</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Error in `assays&lt;-`:</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># please use 'assay(x, withDimnames=FALSE)) &lt;- value' or </span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 'assays(x, withDimnames=FALSE)) &lt;- value'</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># when the rownames or colnames of the supplied assay(s) are not </span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># identical to those of the receiving  SummarizedExperiment object 'x'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>Other such validity checks include comparison across <em>different genome builds</em>.</p></li>
+<li><p>Errors triggered by metadata better than silent errors!</p></li>
+</ul>
+</section>
+<section id="can-be-hard-for-new-users" class="level2">
+<h2 class="anchored" data-anchor-id="can-be-hard-for-new-users">Can be hard for new users</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slotNames</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "colData"         "assays"          "NAMES"           "elementMetadata"
+[5] "metadata"       </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">methods</span>(<span class="at">class =</span> <span class="fu">class</span>(se)) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "!=,ANY,Vector-method"                        
+[2] "!=,Vector,ANY-method"                        
+[3] "!=,Vector,Vector-method"                     
+[4] "[,SummarizedExperiment,ANY,ANY,ANY-method"   
+[5] "[[,SummarizedExperiment,ANY,missing-method"  
+[6] "[[&lt;-,SummarizedExperiment,ANY,missing-method"</code></pre>
+</div>
+</div>
+<ul>
+<li><p>An advanced R/Bioconductor user should eventually learn these methods, class/method inheritance.</p></li>
+<li><p>Not needed to explore or visualize data, or make basic data summaries.</p></li>
+</ul>
+</section>
+<section id="beginners-know-dplyr-ggplot2" class="level2">
+<h2 class="anchored" data-anchor-id="beginners-know-dplyr-ggplot2">Beginners know <em>dplyr</em> &amp; <em>ggplot2</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># filter to samples in condition 'x'</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>samples <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  sample condition sex  
+  &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;
+1 s1     x         m    
+2 s3     x         f    </code></pre>
+</div>
+</div>
+</section>
+<section id="enabling-dplyr-verbs-for-omics" class="level2">
+<h2 class="anchored" data-anchor-id="enabling-dplyr-verbs-for-omics">Enabling <em>dplyr</em> verbs for omics</h2>
+<ul>
+<li><p><em>tidySummarizedExperiment</em> package from Mangiola <em>et al.</em></p></li>
+<li><p>Printing says: “<em>SummarizedExperiment-tibble abstraction</em>”</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidySummarizedExperiment)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A SummarizedExperiment-tibble abstraction: 16 × 8
+# Features=4 | Samples=4 | Assays=counts
+   .feature .sample counts sample condition sex   id    symbol
+   &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; 
+ 1 g1       s1          94 s1     x         m     g1    ABC   
+ 2 g2       s1         111 s1     x         m     g2    DEF   
+ 3 g3       s1          83 s1     x         m     g3    GHI   
+ 4 g4       s1         101 s1     x         m     g4    JKL   
+ 5 g1       s2         117 s2     y         m     g1    ABC   
+ 6 g2       s2         104 s2     y         m     g2    DEF   
+ 7 g3       s2          87 s2     y         m     g3    GHI   
+ 8 g4       s2          82 s2     y         m     g4    JKL   
+ 9 g1       s3         112 s3     x         f     g1    ABC   
+10 g2       s3         103 s3     x         f     g2    DEF   
+11 g3       s3         104 s3     x         f     g3    GHI   
+12 g4       s3         101 s3     x         f     g4    JKL   
+13 g1       s4          94 s4     y         f     g1    ABC   
+14 g2       s4         112 s4     y         f     g2    DEF   
+15 g3       s4         108 s4     y         f     g3    GHI   
+16 g4       s4          99 s4     y         f     g4    JKL   </code></pre>
+</div>
+</div>
+<p>If you prefer for the old S4 <code>show</code> method to be used:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">"restore_SummarizedExperiment_show"</span> <span class="ot">=</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class: SummarizedExperiment 
+dim: 4 4 
+metadata(1): organism
+assays(1): counts
+rownames(4): g1 g2 g3 g4
+rowData names(2): id symbol
+colnames(4): s1 s2 s3 s4
+colData names(3): sample condition sex</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>calling <code>print(se)</code> even after restoring <code>show()</code> will still use the “tibble-abstraction”!</p>
+</div>
+</div>
+</section>
+<section id="the-api" class="level2">
+<h2 class="anchored" data-anchor-id="the-api">The API</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>se2 <span class="ot">&lt;-</span> se <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)  </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>se2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class: SummarizedExperiment 
+dim: 4 2 
+metadata(1): organism
+assays(1): counts
+rownames(4): g1 g2 g3 g4
+rowData names(2): id symbol
+colnames(2): s1 s3
+colData names(3): sample condition sex</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(se2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 2 rows and 3 columns
+        sample   condition         sex
+   &lt;character&gt; &lt;character&gt; &lt;character&gt;
+s1          s1           x           m
+s3          s3           x           f</code></pre>
+</div>
+</div>
+</section>
+<section id="facilitates-quick-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="facilitates-quick-exploration">Facilitates quick exploration</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>se <span class="sc">|&gt;</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.feature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>)) <span class="sc">|&gt;</span> <span class="co"># `.feature` a special name</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(condition, counts, <span class="at">color=</span>sex, <span class="at">group=</span>sex)) <span class="sc">+</span> </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span>.feature)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="workshop_files/figure-html/ggplot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="efficient-operation-on-se-with-plyxp" class="level2">
+<h2 class="anchored" data-anchor-id="efficient-operation-on-se-with-plyxp">Efficient operation on SE with <code>plyxp</code></h2>
+<ul>
+<li><p>Justin Landis (UNC BCB) noticed some opportunities for more efficient operations.</p></li>
+<li><p>Also, reduce ambiguity, allow multiple ways to access data across context. Leveraging data masks from <em>rlang</em>.</p></li>
+<li><p>Developed in Summer 2024: <code>plyxp</code>, stand-alone but also as a <em>tidySummarizedExperiment</em> engine.</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/plyxp.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="to-use-plyxp" class="level2">
+<h2 class="anchored" data-anchor-id="to-use-plyxp">To use <code>plyxp</code></h2>
+<p>Start by wraping any class inheriting from <code>SummarizedExperiment</code> with <code>plyxp</code>’s thin wrapper class:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyxp)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>xp <span class="ot">&lt;-</span> <span class="fu">new_plyxp</span>(se)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>xp <span class="sc">|&gt;</span> <span class="fu">class</span>() <span class="sc">|&gt;</span> <span class="fu">getClass</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Class "PlySummarizedExperiment" [package "plyxp"]
+
+Slots:
+                           
+Name:                    se
+Class: SummarizedExperiment</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="columns">
+<div class="column" style="width:40%;">
+<p>Unlike <code>tidySummarizedExperiment</code>, <code>plyxp</code> only extends <code>dplyr</code>. Thus you cannot pipe output from <code>plyxp</code> into <code>tidyr</code> or <code>ggplot2</code> (<u><em>yet</em></u>). However you can always retrieve the underlying <code>SummarizedExperiment</code> object via the <code>se()</code> function.</p>
+</div><div class="column" style="width:60%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">se</span>(xp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class: SummarizedExperiment 
+dim: 4 4 
+metadata(1): organism
+assays(1): counts
+rownames(4): g1 g2 g3 g4
+rowData names(2): id symbol
+colnames(4): s1 s2 s3 s4
+colData names(3): sample condition sex</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="using-plyxp" class="level2">
+<h2 class="anchored" data-anchor-id="using-plyxp">Using <code>plyxp</code></h2>
+<p><code>plyxp</code> is a stricter version of <code>tidySummarizedExperiment</code>. It’s grammar reinforces the underlying structure of the <code>SummarizedExperiment</code> class. It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/plyxp-bindings.png" class="img-fluid figure-img" alt="A depiction of a SummarizedExperiment object and its bindings to three evaluation contexts: the assays, row-data, and col-data."></p>
+<figcaption>A SummarizedExperiment has three evaluation contexts: the assays, rowData, and colData. Figure made with <a href="BioRender.com">BioRender</a></figcaption>
+</figure>
+</div>
+</section>
+<section id="using-plyxp-cont." class="level2">
+<h2 class="anchored" data-anchor-id="using-plyxp-cont.">Using <code>plyxp</code> cont.</h2>
+<p><code>plyxp</code> allows optional access into the other contexts with special <u><strong>pronouns</strong></u>. These will reshape the data for something convenient for the current context. There also exists special <strong>_asis</strong> variants that do not reshape the data.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/plyxp-bindings.png" class="img-fluid figure-img" alt="A depiction of a SummarizedExperiment object's three evaluation contexts and the pronouns within."></p>
+<figcaption>Each context contains special pronouns that point to the other contexts. The special <strong>_asis</strong> variants are not shown here. Figure made with <a href="BioRender.com">BioRender</a></figcaption>
+</figure>
+</div>
+</section>
+<section id="the-airway-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="the-airway-dataset">The Airway dataset</h2>
+<p>Read counts from an RNA-seq experiment of airway smooth muscle cell lines. This is a <code>RangedSummarizedExperiment</code> which indicates genomic ranges are used.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(airway)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(airway)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>airway</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class: RangedSummarizedExperiment 
+dim: 63677 8 
+metadata(1): ''
+assays(1): counts
+rownames(63677): ENSG00000000003 ENSG00000000005 ... ENSG00000273492
+  ENSG00000273493
+rowData names(10): gene_id gene_name ... seq_coord_system symbol
+colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521
+colData names(9): SampleName cell ... Sample BioSample</code></pre>
+</div>
+</div>
+<p>The columns are our 8 samples, and the rows are the genes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowRanges</span>(airway)  <span class="co"># pipe this output to mcols() for more data!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRangesList object of length 63677:
+$ENSG00000000003
+GRanges object with 17 ranges and 2 metadata columns:
+       seqnames            ranges strand |   exon_id       exon_name
+          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt;     &lt;character&gt;
+   [1]        X 99883667-99884983      - |    667145 ENSE00001459322
+   [2]        X 99885756-99885863      - |    667146 ENSE00000868868
+   [3]        X 99887482-99887565      - |    667147 ENSE00000401072
+   [4]        X 99887538-99887565      - |    667148 ENSE00001849132
+   [5]        X 99888402-99888536      - |    667149 ENSE00003554016
+   ...      ...               ...    ... .       ...             ...
+  [13]        X 99890555-99890743      - |    667156 ENSE00003512331
+  [14]        X 99891188-99891686      - |    667158 ENSE00001886883
+  [15]        X 99891605-99891803      - |    667159 ENSE00001855382
+  [16]        X 99891790-99892101      - |    667160 ENSE00001863395
+  [17]        X 99894942-99894988      - |    667161 ENSE00001828996
+  -------
+  seqinfo: 722 sequences (1 circular) from an unspecified genome
+
+...
+&lt;63676 more elements&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(airway)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 8 rows and 9 columns
+           SampleName     cell      dex    albut        Run avgLength
+             &lt;factor&gt; &lt;factor&gt; &lt;factor&gt; &lt;factor&gt;   &lt;factor&gt; &lt;integer&gt;
+SRR1039508 GSM1275862  N61311     untrt    untrt SRR1039508       126
+SRR1039509 GSM1275863  N61311     trt      untrt SRR1039509       126
+SRR1039512 GSM1275866  N052611    untrt    untrt SRR1039512       126
+SRR1039513 GSM1275867  N052611    trt      untrt SRR1039513        87
+SRR1039516 GSM1275870  N080611    untrt    untrt SRR1039516       120
+SRR1039517 GSM1275871  N080611    trt      untrt SRR1039517       126
+SRR1039520 GSM1275874  N061011    untrt    untrt SRR1039520       101
+SRR1039521 GSM1275875  N061011    trt      untrt SRR1039521        98
+           Experiment    Sample    BioSample
+             &lt;factor&gt;  &lt;factor&gt;     &lt;factor&gt;
+SRR1039508  SRX384345 SRS508568 SAMN02422669
+SRR1039509  SRX384346 SRS508567 SAMN02422675
+SRR1039512  SRX384349 SRS508571 SAMN02422678
+SRR1039513  SRX384350 SRS508572 SAMN02422670
+SRR1039516  SRX384353 SRS508575 SAMN02422682
+SRR1039517  SRX384354 SRS508576 SAMN02422673
+SRR1039520  SRX384357 SRS508579 SAMN02422683
+SRR1039521  SRX384358 SRS508580 SAMN02422677</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We would typically use <code>rowData()</code>, but with a <code>RangedSummarizedExperiment</code> we should use <code>rowRanges()</code> if we want to query the information about the range data.</p>
+</div>
+</div>
+</section>
+<section id="airway-with-plyxp" class="level2">
+<h2 class="anchored" data-anchor-id="airway-with-plyxp">airway with <code>plyxp</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>airxp <span class="ot">&lt;-</span> <span class="fu">new_plyxp</span>(airway)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>airxp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A RangedSummarizedExperiment-tibble Abstraction: 63,677 × 8
+    .features       .samples  | counts | gene_id gene_name entrezid gene_biotype
+    &lt;chr&gt;           &lt;chr&gt;     |  &lt;int&gt; | &lt;chr&gt;   &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;       
+  1 ENSG00000000003 SRR10395… |    679 | ENSG00… TSPAN6          NA protein_cod…
+  2 ENSG00000000005 SRR10395… |      0 | ENSG00… TNMD            NA protein_cod…
+  3 ENSG00000000419 SRR10395… |    467 | ENSG00… DPM1            NA protein_cod…
+  4 ENSG00000000457 SRR10395… |    260 | ENSG00… SCYL3           NA protein_cod…
+  5 ENSG00000000460 SRR10395… |     60 | ENSG00… C1orf112        NA protein_cod…
+  …        …            …            …      …        …            …       …     
+n-4 ENSG00000273489 SRR10395… |      0 | ENSG00… RP11-180…       NA antisense   
+n-3 ENSG00000273490 SRR10395… |      0 | ENSG00… TSEN34          NA protein_cod…
+n-2 ENSG00000273491 SRR10395… |      0 | ENSG00… RP11-138…       NA lincRNA     
+n-1 ENSG00000273492 SRR10395… |      0 | ENSG00… AP000230…       NA lincRNA     
+n   ENSG00000273493 SRR10395… |      0 | ENSG00… RP11-80H…       NA lincRNA     
+# ℹ n = 509,416
+# ℹ 16 more variables: gene_seq_start &lt;int&gt;, gene_seq_end &lt;int&gt;,
+#   seq_name &lt;chr&gt;, seq_strand &lt;int&gt;, seq_coord_system &lt;int&gt;, symbol &lt;chr&gt;,
+#   `` &lt;&gt;, SampleName &lt;fct&gt;, cell &lt;fct&gt;, dex &lt;fct&gt;, albut &lt;fct&gt;, Run &lt;fct&gt;,
+#   avgLength &lt;int&gt;, Experiment &lt;fct&gt;, Sample &lt;fct&gt;, BioSample &lt;fct&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>airxp <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(counts), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="workshop_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="ot">&lt;-</span> airxp <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rows</span>(</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># only investigate protein coding genes</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>      gene_biotype <span class="sc">==</span> <span class="st">"protein_coding"</span>,</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>      <span class="co"># retain genes whose counts across all samples is non-zero</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rowSums</span>(.assays_asis<span class="sc">$</span>counts) <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>airxp_sub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A RangedSummarizedExperiment-tibble Abstraction: 17,277 × 8
+    .features       .samples  | counts | gene_id gene_name entrezid gene_biotype
+    &lt;chr&gt;           &lt;chr&gt;     |  &lt;int&gt; | &lt;chr&gt;   &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;       
+  1 ENSG00000000003 SRR10395… |    679 | ENSG00… TSPAN6          NA protein_cod…
+  2 ENSG00000000419 SRR10395… |    467 | ENSG00… DPM1            NA protein_cod…
+  3 ENSG00000000457 SRR10395… |    260 | ENSG00… SCYL3           NA protein_cod…
+  4 ENSG00000000460 SRR10395… |     60 | ENSG00… C1orf112        NA protein_cod…
+  5 ENSG00000000938 SRR10395… |      0 | ENSG00… FGR             NA protein_cod…
+  …        …            …            …      …     …               …       …     
+n-4 ENSG00000273259 SRR10395… |      6 | ENSG00… RP11-986…       NA protein_cod…
+n-3 ENSG00000273274 SRR10395… |      1 | ENSG00… ZBTB8B          NA protein_cod…
+n-2 ENSG00000273291 SRR10395… |     12 | ENSG00… KRBOX1          NA protein_cod…
+n-1 ENSG00000273294 SRR10395… |      0 | ENSG00… RP11-108…       NA protein_cod…
+n   ENSG00000273398 SRR10395… |      1 | ENSG00… RP11-474…       NA protein_cod…
+# ℹ n = 138,216
+# ℹ 16 more variables: gene_seq_start &lt;int&gt;, gene_seq_end &lt;int&gt;,
+#   seq_name &lt;chr&gt;, seq_strand &lt;int&gt;, seq_coord_system &lt;int&gt;, symbol &lt;chr&gt;,
+#   `` &lt;&gt;, SampleName &lt;fct&gt;, cell &lt;fct&gt;, dex &lt;fct&gt;, albut &lt;fct&gt;, Run &lt;fct&gt;,
+#   avgLength &lt;int&gt;, Experiment &lt;fct&gt;, Sample &lt;fct&gt;, BioSample &lt;fct&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="sc">|&gt;</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(counts), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="workshop_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
