@@ -281,19 +281,16 @@ important
 <section id="summarizedexperiments" class="level2">
 <h2 class="anchored" data-anchor-id="summarizedexperiments">SummarizedExperiments</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'GenomeInfoDb' was built under R version 4.5.1</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># some random count data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># some random count data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rpois</span>(<span class="dv">16</span>, <span class="at">lambda=</span><span class="dv">100</span>), <span class="at">ncol=</span><span class="dv">4</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>))</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rpois</span>(<span class="dv">16</span>, <span class="at">lambda=</span><span class="dv">100</span>), <span class="at">ncol=</span><span class="dv">4</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    s1  s2  s3  s4
 g1  94 117 112  94
@@ -307,11 +304,11 @@ g4 101  82 101  99</code></pre>
 <h2 class="anchored" data-anchor-id="row-data-and-column-data">Row data and column data</h2>
 <p>metadata about genes (rows)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>), </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="fu">c</span>(<span class="st">"ABC"</span>,<span class="st">"DEF"</span>,<span class="st">"GHI"</span>,<span class="st">"JKL"</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>genes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">symbol =</span> <span class="fu">c</span>(<span class="st">"ABC"</span>,<span class="st">"DEF"</span>,<span class="st">"GHI"</span>,<span class="st">"JKL"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>genes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 4 rows and 2 columns
            id      symbol
@@ -324,12 +321,12 @@ g4 101  82 101  99</code></pre>
 </div>
 <p>metadata about samples (columns)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>),</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="fu">c</span>(<span class="st">"x"</span>,<span class="st">"y"</span>,<span class="st">"x"</span>,<span class="st">"y"</span>),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">c</span>(<span class="st">"m"</span>,<span class="st">"m"</span>,<span class="st">"f"</span>,<span class="st">"f"</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>samples</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="fu">c</span>(<span class="st">"x"</span>,<span class="st">"y"</span>,<span class="st">"x"</span>,<span class="st">"y"</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">c</span>(<span class="st">"m"</span>,<span class="st">"m"</span>,<span class="st">"f"</span>,<span class="st">"f"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>samples</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 4 rows and 3 columns
        sample   condition         sex
@@ -344,13 +341,13 @@ g4 101  82 101  99</code></pre>
 <section id="assembled-object" class="level2">
 <h2 class="anchored" data-anchor-id="assembled-object">Assembled object</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">SummarizedExperiment</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">assays =</span> <span class="fu">list</span>(<span class="at">counts =</span> counts),</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">rowData =</span> genes, </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">colData =</span> samples,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metadata =</span> <span class="fu">list</span>(<span class="at">organism=</span><span class="st">"Hsapiens"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">SummarizedExperiment</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">assays =</span> <span class="fu">list</span>(<span class="at">counts =</span> counts),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">rowData =</span> genes,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">colData =</span> samples,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metadata =</span> <span class="fu">list</span>(<span class="at">organism=</span><span class="st">"Hsapiens"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SummarizedExperiment 
 dim: 4 4 
@@ -367,8 +364,8 @@ colData names(3): sample condition sex</code></pre>
 <h2 class="anchored" data-anchor-id="deals-with-bookkeeping-issues">Deals with bookkeeping issues</h2>
 <p>Reordering columns propagates to <code>assay</code> and <code>colData</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se2 <span class="ot">&lt;-</span> se[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">4</span>)]</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se2, <span class="st">"counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>se2 <span class="ot">&lt;-</span> se[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">4</span>)]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se2, <span class="st">"counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    s1  s3  s2  s4
 g1  94 112 117  94
@@ -376,7 +373,7 @@ g2 111 103 104 112
 g3  83 104  87 108
 g4 101 101  82  99</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(se2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(se2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 4 rows and 3 columns
         sample   condition         sex
@@ -392,12 +389,12 @@ s4          s4           y           f</code></pre>
 <h2 class="anchored" data-anchor-id="deals-with-bookkeeping-issues-1">Deals with bookkeeping issues</h2>
 <p>Assignment with conflicting metadata gives an error:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se2) <span class="ot">&lt;-</span> counts</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Error in `assays&lt;-`:</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># please use 'assay(x, withDimnames=FALSE)) &lt;- value' or </span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 'assays(x, withDimnames=FALSE)) &lt;- value'</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># when the rownames or colnames of the supplied assay(s) are not </span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># identical to those of the receiving  SummarizedExperiment object 'x'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(se2) <span class="ot">&lt;-</span> counts</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Error in `assays&lt;-`:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># please use 'assay(x, withDimnames=FALSE)) &lt;- value' or</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 'assays(x, withDimnames=FALSE)) &lt;- value'</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># when the rownames or colnames of the supplied assay(s) are not</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># identical to those of the receiving  SummarizedExperiment object 'x'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li><p>Other such validity checks include comparison across <em>different genome builds</em>.</p></li>
@@ -407,19 +404,15 @@ s4          s4           y           f</code></pre>
 <section id="can-be-hard-for-new-users" class="level2">
 <h2 class="anchored" data-anchor-id="can-be-hard-for-new-users">Can be hard for new users</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slotNames</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slotNames</span>(se)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "colData"         "assays"          "NAMES"           "elementMetadata"
-[5] "metadata"       </code></pre>
+<pre><code>[1] "colData"         "assays"          "NAMES"           "elementMetadata" "metadata"       </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">methods</span>(<span class="at">class =</span> <span class="fu">class</span>(se)) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">methods</span>(<span class="at">class =</span> <span class="fu">class</span>(se)) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "!=,ANY,Vector-method"                        
-[2] "!=,Vector,ANY-method"                        
-[3] "!=,Vector,Vector-method"                     
-[4] "[,SummarizedExperiment,ANY,ANY,ANY-method"   
-[5] "[[,SummarizedExperiment,ANY,missing-method"  
-[6] "[[&lt;-,SummarizedExperiment,ANY,missing-method"</code></pre>
+<pre><code>[1] "!=,ANY,Vector-method"                         "!=,Vector,ANY-method"                        
+[3] "!=,Vector,Vector-method"                      "[,SummarizedExperiment,ANY,ANY,ANY-method"   
+[5] "[[,SummarizedExperiment,ANY,missing-method"   "[[&lt;-,SummarizedExperiment,ANY,missing-method"</code></pre>
 </div>
 </div>
 <ul>
@@ -430,11 +423,11 @@ s4          s4           y           f</code></pre>
 <section id="beginners-know-dplyr-ggplot2" class="level2">
 <h2 class="anchored" data-anchor-id="beginners-know-dplyr-ggplot2">Beginners know <em>dplyr</em> &amp; <em>ggplot2</em></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># filter to samples in condition 'x'</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>samples <span class="sc">|&gt;</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># filter to samples in condition 'x'</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>samples <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   sample condition sex  
@@ -451,8 +444,8 @@ s4          s4           y           f</code></pre>
 <li><p>Printing says: “<em>SummarizedExperiment-tibble abstraction</em>”</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidySummarizedExperiment)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidySummarizedExperiment)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble abstraction: 16 × 8
 # Features=4 | Samples=4 | Assays=counts
@@ -478,8 +471,8 @@ s4          s4           y           f</code></pre>
 </div>
 <p>If you prefer for the old S4 <code>show</code> method to be used:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">"restore_SummarizedExperiment_show"</span> <span class="ot">=</span> <span class="cn">TRUE</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">"restore_SummarizedExperiment_show"</span> <span class="ot">=</span> <span class="cn">TRUE</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SummarizedExperiment 
 dim: 4 4 
@@ -508,10 +501,10 @@ Note
 <section id="the-api" class="level2">
 <h2 class="anchored" data-anchor-id="the-api">The API</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>se2 <span class="ot">&lt;-</span> se <span class="sc">|&gt;</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)  </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>se2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>se2 <span class="ot">&lt;-</span> se <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>se2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SummarizedExperiment 
 dim: 4 2 
@@ -522,7 +515,7 @@ rowData names(2): id symbol
 colnames(2): s1 s3
 colData names(3): sample condition sex</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(se2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(se2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 2 rows and 3 columns
         sample   condition         sex
@@ -535,11 +528,11 @@ s3          s3           x           f</code></pre>
 <section id="facilitates-quick-exploration" class="level2">
 <h2 class="anchored" data-anchor-id="facilitates-quick-exploration">Facilitates quick exploration</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>se <span class="sc">|&gt;</span> </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.feature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>)) <span class="sc">|&gt;</span> <span class="co"># `.feature` a special name</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(condition, counts, <span class="at">color=</span>sex, <span class="at">group=</span>sex)) <span class="sc">+</span> </span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span>.feature)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>se <span class="sc">|&gt;</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.feature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>)) <span class="sc">|&gt;</span> <span class="co"># `.feature` a special name</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(condition, counts, <span class="at">color=</span>sex, <span class="at">group=</span>sex)) <span class="sc">+</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span>.feature)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -566,9 +559,9 @@ s3          s3           x           f</code></pre>
 <h2 class="anchored" data-anchor-id="to-use-plyxp">To use <code>plyxp</code></h2>
 <p>Start by wraping any class inheriting from <code>SummarizedExperiment</code> with <code>plyxp</code>’s thin wrapper class:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyxp)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>xp <span class="ot">&lt;-</span> <span class="fu">new_plyxp</span>(se)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>xp <span class="sc">|&gt;</span> <span class="fu">class</span>() <span class="sc">|&gt;</span> <span class="fu">getClass</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyxp)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>xp <span class="ot">&lt;-</span> <span class="fu">new_plyxp</span>(se)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>xp <span class="sc">|&gt;</span> <span class="fu">class</span>() <span class="sc">|&gt;</span> <span class="fu">getClass</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Class "PlySummarizedExperiment" [package "plyxp"]
 
@@ -593,7 +586,7 @@ Note
 <p>Unlike <code>tidySummarizedExperiment</code>, <code>plyxp</code> only extends <code>dplyr</code>. Thus you cannot pipe output from <code>plyxp</code> into <code>tidyr</code> or <code>ggplot2</code> (<u><em>yet</em></u>). However you can always retrieve the underlying <code>SummarizedExperiment</code> object via the <code>se()</code> function.</p>
 </div><div class="column" style="width:60%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">se</span>(xp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">se</span>(xp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SummarizedExperiment 
 dim: 4 4 
@@ -634,16 +627,15 @@ colData names(3): sample condition sex</code></pre>
 <h2 class="anchored" data-anchor-id="the-airway-dataset">The Airway dataset</h2>
 <p>Read counts from an RNA-seq experiment of airway smooth muscle cell lines. This is a <code>RangedSummarizedExperiment</code> which indicates genomic ranges are used.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(airway)</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(airway)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>airway</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(airway)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(airway)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>airway</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: RangedSummarizedExperiment 
 dim: 63677 8 
 metadata(1): ''
 assays(1): counts
-rownames(63677): ENSG00000000003 ENSG00000000005 ... ENSG00000273492
-  ENSG00000273493
+rownames(63677): ENSG00000000003 ENSG00000000005 ... ENSG00000273492 ENSG00000273493
 rowData names(10): gene_id gene_name ... seq_coord_system symbol
 colnames(8): SRR1039508 SRR1039509 ... SRR1039520 SRR1039521
 colData names(9): SampleName cell ... Sample BioSample</code></pre>
@@ -651,7 +643,7 @@ colData names(9): SampleName cell ... Sample BioSample</code></pre>
 </div>
 <p>The columns are our 8 samples, and the rows are the genes.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowRanges</span>(airway)  <span class="co"># pipe this output to mcols() for more data!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowRanges</span>(airway)  <span class="co"># pipe this output to mcols() for more data!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRangesList object of length 63677:
 $ENSG00000000003
@@ -675,29 +667,29 @@ GRanges object with 17 ranges and 2 metadata columns:
 ...
 &lt;63676 more elements&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(airway)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(airway)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 8 rows and 9 columns
-           SampleName     cell      dex    albut        Run avgLength
-             &lt;factor&gt; &lt;factor&gt; &lt;factor&gt; &lt;factor&gt;   &lt;factor&gt; &lt;integer&gt;
-SRR1039508 GSM1275862  N61311     untrt    untrt SRR1039508       126
-SRR1039509 GSM1275863  N61311     trt      untrt SRR1039509       126
-SRR1039512 GSM1275866  N052611    untrt    untrt SRR1039512       126
-SRR1039513 GSM1275867  N052611    trt      untrt SRR1039513        87
-SRR1039516 GSM1275870  N080611    untrt    untrt SRR1039516       120
-SRR1039517 GSM1275871  N080611    trt      untrt SRR1039517       126
-SRR1039520 GSM1275874  N061011    untrt    untrt SRR1039520       101
-SRR1039521 GSM1275875  N061011    trt      untrt SRR1039521        98
-           Experiment    Sample    BioSample
-             &lt;factor&gt;  &lt;factor&gt;     &lt;factor&gt;
-SRR1039508  SRX384345 SRS508568 SAMN02422669
-SRR1039509  SRX384346 SRS508567 SAMN02422675
-SRR1039512  SRX384349 SRS508571 SAMN02422678
-SRR1039513  SRX384350 SRS508572 SAMN02422670
-SRR1039516  SRX384353 SRS508575 SAMN02422682
-SRR1039517  SRX384354 SRS508576 SAMN02422673
-SRR1039520  SRX384357 SRS508579 SAMN02422683
-SRR1039521  SRX384358 SRS508580 SAMN02422677</code></pre>
+           SampleName     cell      dex    albut        Run avgLength Experiment    Sample
+             &lt;factor&gt; &lt;factor&gt; &lt;factor&gt; &lt;factor&gt;   &lt;factor&gt; &lt;integer&gt;   &lt;factor&gt;  &lt;factor&gt;
+SRR1039508 GSM1275862  N61311     untrt    untrt SRR1039508       126  SRX384345 SRS508568
+SRR1039509 GSM1275863  N61311     trt      untrt SRR1039509       126  SRX384346 SRS508567
+SRR1039512 GSM1275866  N052611    untrt    untrt SRR1039512       126  SRX384349 SRS508571
+SRR1039513 GSM1275867  N052611    trt      untrt SRR1039513        87  SRX384350 SRS508572
+SRR1039516 GSM1275870  N080611    untrt    untrt SRR1039516       120  SRX384353 SRS508575
+SRR1039517 GSM1275871  N080611    trt      untrt SRR1039517       126  SRX384354 SRS508576
+SRR1039520 GSM1275874  N061011    untrt    untrt SRR1039520       101  SRX384357 SRS508579
+SRR1039521 GSM1275875  N061011    trt      untrt SRR1039521        98  SRX384358 SRS508580
+              BioSample
+               &lt;factor&gt;
+SRR1039508 SAMN02422669
+SRR1039509 SAMN02422675
+SRR1039512 SAMN02422678
+SRR1039513 SAMN02422670
+SRR1039516 SAMN02422682
+SRR1039517 SAMN02422673
+SRR1039520 SAMN02422683
+SRR1039521 SAMN02422677</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -717,34 +709,33 @@ Note
 <section id="airway-with-plyxp" class="level2">
 <h2 class="anchored" data-anchor-id="airway-with-plyxp">airway with <code>plyxp</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>airxp <span class="ot">&lt;-</span> <span class="fu">new_plyxp</span>(airway)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>airxp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>airxp <span class="ot">&lt;-</span> <span class="fu">new_plyxp</span>(airway)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>airxp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A RangedSummarizedExperiment-tibble Abstraction: 63,677 × 8
-    .features       .samples  | counts | gene_id gene_name entrezid gene_biotype
-    &lt;chr&gt;           &lt;chr&gt;     |  &lt;int&gt; | &lt;chr&gt;   &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;       
-  1 ENSG00000000003 SRR10395… |    679 | ENSG00… TSPAN6          NA protein_cod…
-  2 ENSG00000000005 SRR10395… |      0 | ENSG00… TNMD            NA protein_cod…
-  3 ENSG00000000419 SRR10395… |    467 | ENSG00… DPM1            NA protein_cod…
-  4 ENSG00000000457 SRR10395… |    260 | ENSG00… SCYL3           NA protein_cod…
-  5 ENSG00000000460 SRR10395… |     60 | ENSG00… C1orf112        NA protein_cod…
-  …        …            …            …      …        …            …       …     
-n-4 ENSG00000273489 SRR10395… |      0 | ENSG00… RP11-180…       NA antisense   
-n-3 ENSG00000273490 SRR10395… |      0 | ENSG00… TSEN34          NA protein_cod…
-n-2 ENSG00000273491 SRR10395… |      0 | ENSG00… RP11-138…       NA lincRNA     
-n-1 ENSG00000273492 SRR10395… |      0 | ENSG00… AP000230…       NA lincRNA     
-n   ENSG00000273493 SRR10395… |      0 | ENSG00… RP11-80H…       NA lincRNA     
+    .features       .samples   | counts | gene_id     gene_name entrezid gene_biotype gene_seq_start
+    &lt;chr&gt;           &lt;chr&gt;      |  &lt;int&gt; | &lt;chr&gt;       &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;                 &lt;int&gt;
+  1 ENSG00000000003 SRR1039508 |    679 | ENSG000000… TSPAN6          NA protein_cod…       99883667
+  2 ENSG00000000005 SRR1039508 |      0 | ENSG000000… TNMD            NA protein_cod…       99839799
+  3 ENSG00000000419 SRR1039508 |    467 | ENSG000000… DPM1            NA protein_cod…       49551404
+  4 ENSG00000000457 SRR1039508 |    260 | ENSG000000… SCYL3           NA protein_cod…      169818772
+  5 ENSG00000000460 SRR1039508 |     60 | ENSG000000… C1orf112        NA protein_cod…      169631245
+  …        …             …            …        …          …            …       …               …    
+n-4 ENSG00000273489 SRR1039521 |      0 | ENSG000002… RP11-180…       NA antisense         131178723
+n-3 ENSG00000273490 SRR1039521 |      0 | ENSG000002… TSEN34          NA protein_cod…       54693789
+n-2 ENSG00000273491 SRR1039521 |      0 | ENSG000002… RP11-138…       NA lincRNA           130600118
+n-1 ENSG00000273492 SRR1039521 |      0 | ENSG000002… AP000230…       NA lincRNA            27543189
+n   ENSG00000273493 SRR1039521 |      0 | ENSG000002… RP11-80H…       NA lincRNA            58315692
 # ℹ n = 509,416
-# ℹ 16 more variables: gene_seq_start &lt;int&gt;, gene_seq_end &lt;int&gt;,
-#   seq_name &lt;chr&gt;, seq_strand &lt;int&gt;, seq_coord_system &lt;int&gt;, symbol &lt;chr&gt;,
-#   `` &lt;&gt;, SampleName &lt;fct&gt;, cell &lt;fct&gt;, dex &lt;fct&gt;, albut &lt;fct&gt;, Run &lt;fct&gt;,
-#   avgLength &lt;int&gt;, Experiment &lt;fct&gt;, Sample &lt;fct&gt;, BioSample &lt;fct&gt;</code></pre>
+# ℹ 15 more variables: gene_seq_end &lt;int&gt;, seq_name &lt;chr&gt;, seq_strand &lt;int&gt;,
+#   seq_coord_system &lt;int&gt;, symbol &lt;chr&gt;, `` &lt;&gt;, SampleName &lt;fct&gt;, cell &lt;fct&gt;, dex &lt;fct&gt;,
+#   albut &lt;fct&gt;, Run &lt;fct&gt;, avgLength &lt;int&gt;, Experiment &lt;fct&gt;, Sample &lt;fct&gt;, BioSample &lt;fct&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>airxp <span class="sc">|&gt;</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(counts), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>airxp <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(counts), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -753,47 +744,214 @@ n   ENSG00000273493 SRR10395… |      0 | ENSG00… RP11-80H…       NA lincRN
 </div>
 </div>
 </div>
+<p>A common operation is to calculate the RPKM (Reads Per Kilobase of transcript, per Million mapped reads) or TPM (Transcripts Per Million) values for each gene in each sample.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="ot">&lt;-</span> airxp <span class="sc">|&gt;</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rows</span>(</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># only investigate protein coding genes</span></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>      gene_biotype <span class="sc">==</span> <span class="st">"protein_coding"</span>,</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>      <span class="co"># retain genes whose counts across all samples is non-zero</span></span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rowSums</span>(.assays_asis<span class="sc">$</span>counts) <span class="sc">&gt;</span> <span class="dv">0</span></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>  ) </span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>airxp_sub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A RangedSummarizedExperiment-tibble Abstraction: 17,277 × 8
-    .features       .samples  | counts | gene_id gene_name entrezid gene_biotype
-    &lt;chr&gt;           &lt;chr&gt;     |  &lt;int&gt; | &lt;chr&gt;   &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;       
-  1 ENSG00000000003 SRR10395… |    679 | ENSG00… TSPAN6          NA protein_cod…
-  2 ENSG00000000419 SRR10395… |    467 | ENSG00… DPM1            NA protein_cod…
-  3 ENSG00000000457 SRR10395… |    260 | ENSG00… SCYL3           NA protein_cod…
-  4 ENSG00000000460 SRR10395… |     60 | ENSG00… C1orf112        NA protein_cod…
-  5 ENSG00000000938 SRR10395… |      0 | ENSG00… FGR             NA protein_cod…
-  …        …            …            …      …     …               …       …     
-n-4 ENSG00000273259 SRR10395… |      6 | ENSG00… RP11-986…       NA protein_cod…
-n-3 ENSG00000273274 SRR10395… |      1 | ENSG00… ZBTB8B          NA protein_cod…
-n-2 ENSG00000273291 SRR10395… |     12 | ENSG00… KRBOX1          NA protein_cod…
-n-1 ENSG00000273294 SRR10395… |      0 | ENSG00… RP11-108…       NA protein_cod…
-n   ENSG00000273398 SRR10395… |      1 | ENSG00… RP11-474…       NA protein_cod…
-# ℹ n = 138,216
-# ℹ 16 more variables: gene_seq_start &lt;int&gt;, gene_seq_end &lt;int&gt;,
-#   seq_name &lt;chr&gt;, seq_strand &lt;int&gt;, seq_coord_system &lt;int&gt;, symbol &lt;chr&gt;,
-#   `` &lt;&gt;, SampleName &lt;fct&gt;, cell &lt;fct&gt;, dex &lt;fct&gt;, albut &lt;fct&gt;, Run &lt;fct&gt;,
-#   avgLength &lt;int&gt;, Experiment &lt;fct&gt;, Sample &lt;fct&gt;, BioSample &lt;fct&gt;</code></pre>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>airxp <span class="ot">&lt;-</span> airxp <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rows</span>(</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># get a gene length per gene</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">len =</span> gene_seq_end <span class="sc">-</span> gene_seq_start <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># calculate RPKM per gene and sample count</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RPK =</span> counts <span class="sc">/</span> (.rows<span class="sc">$</span>len <span class="sc">/</span> <span class="fl">1e3</span>),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cols</span>(</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>      <span class="co"># calculate a scaling factor for each sample</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">scale_factor =</span> <span class="fu">colSums</span>(.assays_asis<span class="sc">$</span>RPK) <span class="sc">/</span> <span class="fl">1e6</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># scale TMP by scaling factor</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">TPM =</span> RPK <span class="sc">/</span> .cols<span class="sc">$</span>scale_factor,</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rows</span>(<span class="at">gene_scaled_means =</span> <span class="fu">rowMeans</span>(.assays_asis<span class="sc">$</span>TPM))</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="sc">|&gt;</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(counts), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="ot">&lt;-</span> airxp <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rows</span>(</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># only investigate protein coding genes</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>      gene_biotype <span class="sc">==</span> <span class="st">"protein_coding"</span>,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>      <span class="co"># retain genes whose counts across all samples is non-zero</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>      gene_scaled_means <span class="sc">&gt;</span> <span class="dv">5</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>airxp_sub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A RangedSummarizedExperiment-tibble Abstraction: 6,176 × 8
+    .features .samples | counts   RPK   TPM | gene_id gene_name entrezid gene_biotype gene_seq_start
+    &lt;chr&gt;     &lt;chr&gt;    |  &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; | &lt;chr&gt;   &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;                 &lt;int&gt;
+  1 ENSG0000… SRR1039… |    679  60.0 20.6  | ENSG00… TSPAN6          NA protein_cod…       99883667
+  2 ENSG0000… SRR1039… |    467  19.7  6.76 | ENSG00… DPM1            NA protein_cod…       49551404
+  3 ENSG0000… SRR1039… |   3251  34.0 11.7  | ENSG00… CFH             NA protein_cod…      196621008
+  4 ENSG0000… SRR1039… |   1433  84.9 29.1  | ENSG00… FUCA2           NA protein_cod…      143815948
+  5 ENSG0000… SRR1039… |   2112  36.9 12.7  | ENSG00… NIPAL3          NA protein_cod…       24742284
+  …     …         …          …     …    …        …       …             …       …                …   
+n-4 ENSG0000… SRR1039… |     20  17.3  6.78 | ENSG00… AC187652…       NA protein_cod…         302918
+n-3 ENSG0000… SRR1039… |     32  44.1 17.2  | ENSG00… AC096677…       NA protein_cod…      201592013
+n-2 ENSG0000… SRR1039… |    227  24.1  9.40 | ENSG00… EGLN2           NA protein_cod…       41304901
+n-1 ENSG0000… SRR1039… |     17  16.4  6.41 | ENSG00… MTRNR2L2        NA protein_cod…       79945819
+n   ENSG0000… SRR1039… |    677  21.8  8.54 | ENSG00… GTF2H5          NA protein_cod…      158589384
+# ℹ n = 49,408
+# ℹ 18 more variables: gene_seq_end &lt;int&gt;, seq_name &lt;chr&gt;, seq_strand &lt;int&gt;,
+#   seq_coord_system &lt;int&gt;, symbol &lt;chr&gt;, len &lt;dbl&gt;, gene_scaled_means &lt;dbl&gt;, `` &lt;&gt;,
+#   SampleName &lt;fct&gt;, cell &lt;fct&gt;, dex &lt;fct&gt;, albut &lt;fct&gt;, Run &lt;fct&gt;, avgLength &lt;int&gt;,
+#   Experiment &lt;fct&gt;, Sample &lt;fct&gt;, BioSample &lt;fct&gt;, scale_factor &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(counts), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have column names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of samples.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have row names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of features.</code></pre>
+</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="workshop_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="workshop_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Attempt to find the top 100 genes that have the greatest change between “trt” and “untrt” within each cell.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>top_100_genes <span class="ot">&lt;-</span> airxp_sub <span class="sc">|&gt;</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># do not need to group_by rows(gene_id) ...</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this will create ~ 17,000 additional groups per row!</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># instead we can choose to only split by the columns and</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use vectorized functions</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cols</span>(cell)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># use the `.cols$dex` metadata vector to index the `counts`</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">abs_diff =</span> <span class="fu">abs</span>(counts[.cols<span class="sc">$</span>dex<span class="sc">==</span><span class="st">"trt"</span>] <span class="sc">-</span> counts[.cols<span class="sc">$</span>dex<span class="sc">==</span><span class="st">"untrt"</span>]),</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cols</span>(<span class="at">.samples =</span> <span class="fu">unique</span>(cell))</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for each gene, find the mean absolute diff across</span></span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># all cells</span></span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rows</span>(<span class="at">ave =</span> <span class="fu">rowMeans</span>(.assays_asis<span class="sc">$</span>abs_diff))</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">rows</span>(<span class="sc">-</span>ave)) <span class="sc">|&gt;</span></span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plyxp</span>(\(x) x[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,]) <span class="sc">|&gt;</span></span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(<span class="fu">rows</span>(gene_id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="sc">|&gt;</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">rows</span>(gene_id <span class="sc">%in%</span> top_100_genes)) <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(counts), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have column names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of samples.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have row names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of features.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="workshop_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It is common for a user to visualize data with a heatmap. We can create a function that will cluster the rows and columns of a summarized expeirment based on the values in a given assay name.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>cluster_xp <span class="ot">&lt;-</span> <span class="cf">function</span>(xp, assay) {</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  assay_val <span class="ot">&lt;-</span> <span class="fu">pull</span>(xp, {{ assay }})</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  row_hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(assay_val))</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  col_hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(<span class="fu">t</span>(assay_val)))</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  xp <span class="sc">|&gt;</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>     <span class="fu">rows</span>(<span class="at">features =</span> <span class="fu">factor</span>(.features, <span class="at">levels =</span> .features[row_hc<span class="sc">$</span>order])),</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>     <span class="fu">cols</span>(<span class="at">samples  =</span> <span class="fu">factor</span>(.samples,  <span class="at">levels =</span> .samples[col_hc<span class="sc">$</span>order]))</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="sc">|&gt;</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">rows</span>(gene_id <span class="sc">%in%</span> top_100_genes)) <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cluster_xp</span>(counts) <span class="sc">|&gt;</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> samples, <span class="at">y =</span> features, <span class="at">fill =</span> <span class="fu">log1p</span>(counts))) <span class="sc">+</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have column names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of samples.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have row names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of features.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="workshop_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="sc">|&gt;</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">rows</span>(gene_id <span class="sc">%in%</span> top_100_genes)) <span class="sc">|&gt;</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cluster_xp</span>(TPM) <span class="sc">|&gt;</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> samples, <span class="at">y =</span> features, <span class="at">fill =</span> <span class="fu">log1p</span>(TPM))) <span class="sc">+</span></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have column names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of samples.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have row names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of features.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="workshop_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>airxp_sub <span class="sc">|&gt;</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">se</span>() <span class="sc">|&gt;</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cell, <span class="at">y =</span> <span class="fu">log1p</span>(TPM), <span class="at">fill =</span> dex)) <span class="sc">+</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">angle =</span> <span class="dv">45</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have column names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of samples.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in check_se_dimnames(se): tidySummarizedExperiment says: at least one of the assays in your
+SummarizedExperiment have row names, but they don't completely overlap between assays. It is
+strongly recommended to make the assays consistent, to avoid erroneous matching of features.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="workshop_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
