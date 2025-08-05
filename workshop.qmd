@@ -33,7 +33,7 @@ title: "Tidyomics Workshop: Genomics Analysis"
         -   It allows you to use `dplyr` functions on `SummarizedExperiment` objects, making it easier to work with complex genomic data.
             -   It also implements extensions for more than just `dplyr` functions, such as `ggplot2` and `tidyr`.
     -   implementation may vary depending on extended classes. Note difference between `tidySE` vs `tidySCE`.
-    -   include links to zulip channels/githubs for development of new types such as `tidySpacialExperiment` and `tidySCE`. <!-- unsure about tidySpacialExperiment - maybe I should do some research first -->
+    -   include links to zulip channels/githubs for development of new types such as `tidySpatialExperiment` and `tidySCE`. <!-- unsure about tidySpatialExperiment - maybe I should do some research first -->
         -   At some point introduce `plyxp` as a complementary package to `tidySE`??
             -   `plyxp` only reimagines `dplyr` syntax for SE objects.
 
