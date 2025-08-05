@@ -368,6 +368,7 @@ This is a `RangedSummarizedExperiment` which indicates genomic ranges are used.
 ```{r load airway}
 library(airway)
 data(airway)
+dimnames(assay(airway, "counts")) <- dimnames(airway)
 airway
 ```
 
