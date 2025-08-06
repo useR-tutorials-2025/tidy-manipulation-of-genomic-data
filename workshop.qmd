@@ -2,65 +2,33 @@
 title: "Tidyomics Workshop: Genomics Analysis"
 ---
 
-::: callout-note
-# Notes from Mike
-
--   take moments to get the class in sync. "everyone subset the object to contain only XXX samples/features"
-:::
-
-# The Outline
-
--   What is Bioconductor
-    -   Brief intro to S4
-        -   S4 is one of the *many* frameworks for object-oriented programming in R.
-        -   S4 is the most common framework used in Bioconductor.
-        -   S4 provides a way to define formal classes for generic methods.
-        -   There are 2 types of packages you may find in Bioconductor:
-            -   Software Packages: These packages provide data structures and analysis tools for biological data.
-            -   Data Packages: These packages provide curated datasets for use in analysis.
-    -   Why `SummarizedExperiment` (SE)
-        -   SE has become the de facto standard in Bioconductor for storing matrix-like data.
-        -   SE provides a compressed format for organizing some outer product of two variables. The most typical being features (rows) and samples (columns).
-        -   SE provides additional metadata annotations for both rows and columns, allowing for more complex data structures.
--   What is `tidyomics`
-    -   Brief background on `tidyverse`
-        -   The `tidyverse` is a collection of R packages designed for data science, providing a consistent and user-friendly interface for data manipulation, visualization, and analysis.
-        -   Most common packages include `dplyr`, `ggplot2`, and `tidyr`.
-    -   Motivation for `tidyomics`
--   Using `tidyomics` for *XYZ* Dataset
-    -   Basics of using `tidySE`
-        -   `tidySE` is a package that provides a tidyverse interface for manipulating `SummarizedExperiment` objects.
-        -   It allows you to use `dplyr` functions on `SummarizedExperiment` objects, making it easier to work with complex genomic data.
-            -   It also implements extensions for more than just `dplyr` functions, such as `ggplot2` and `tidyr`.
-    -   implementation may vary depending on extended classes. Note difference between `tidySE` vs `tidySCE`.
-    -   include links to zulip channels/githubs for development of new types such as `tidySpatialExperiment` and `tidySCE`. <!-- unsure about tidySpatialExperiment - maybe I should do some research first -->
-        -   At some point introduce `plyxp` as a complementary package to `tidySE`??
-            -   `plyxp` only reimagines `dplyr` syntax for SE objects.
-
 ## Introduction
 
 Welcome to the Tidyomics workshop! We will be exploring how to use `tidyomics` to perform common operations for analysis and visualization of genomics data.
 
-Before we dive into the details, we will first talk about Bioconductor, the `tidyverse` and its connection to the `tidyomics` project.
+Before we dive into the details, we will first talk about Bioconductor, the *tidyverse* and its connection to the *tidyomics* project.
 
 ## What is Bioconductor?
 
 Bioconductor is an open-source project that provides tools for the analysis and comprehension of high-throughput genomic data.
 
-Bioconductor hosts many R packages that will generally fall into two categories:
+Bioconductor hosts many R packages that will generally fall into three categories:
 
--   Software Packages: These packages provide data structures and analysis tools for biological data.
--   Data Packages: These packages provide curated datasets for use in analysis.
+-   Software packages: These packages provide data structures and analysis tools for biological data.
+-   Data packages: These packages provide curated datasets for use in analysis.
+-   Workflow packages: These packages contain only vignettes demonstrating usage of multiple Bioconductor packages in concert.
+
+It is different from CRAN in particular that Bioconductor has a coordinate, biannual release cycle for all packages.
 
 ## The S4 System
 
-S4 is one of the many frameworks for object-oriented (OO) programming in R. It is the most common framework used in Bioconductor.
+S4 is one of the many frameworks for object-oriented (OO) programming in R. S4 is the [preferred class design](https://contributions.bioconductor.org/r-code.html?#class-design) for Bioconductor packages.
 
-S4 is admittedly more complex than R's simplest OO system S3. The main advantages of S4 over S3 are:
+S4 is admittedly more complex than R's simplest OO framework, S3. The main advantages of S4 over S3 are:
 
 -   standard generics with multiple dispatch
 -   formal classes with enforced type checking / validation
--   Classes with multiple inheritance
+-   classes with multiple inheritance
 
 S4 provides a way to define formal classes for generic methods, allowing for more complex data structures and methods.
 
@@ -68,17 +36,21 @@ S4 provides a way to define formal classes for generic methods, allowing for mor
 
 The structure of an S4 object is defined by its slots (or attributes). While you ***can*** use the `@` operator to access these slots, it is not recommended.
 
-Instead, you should use the associated accessor functions for these slots, which are typically exported with the package.
+Instead, you should use the associated accessor functions for these slots, which are typically exported with the package. For example `assay()` for the `assay` slot. There are also setter functions, e.g. `assay()<-`.
 
-At Bioconductor, the internal structure of the S4 object is subject to change, and thus the `@` operator is not considered a stable way to access data.
+Within Bioconductor, the internal data structure of the S4 object is subject to change, and thus the `@` operator is not considered a stable way to access data, while the accessor functions (and setters) provide a consistent API.
 
 ## The S4 System: SummarizedExperiment (SE)
 
-The `SummarizedExperiment` (SE) class is a powerful and popular data structure in Bioconductor, and parallels the `anndata` object in Python.
+The *SummarizedExperiment* (SE) class is a powerful and popular data structure in Bioconductor.
 
-At its core, the SE stores matrix-like data in the form of "assays".
+At its core, the SE stores matrix-like data in the form of "assays", and provides tables for annotation of the rows and columns.
 
-The SE class has become the de facto standard in Bioconductor for storing matrix-like data, and is used by many packages.
+This structure was originally described in the [2004 Bioconductor publication](https://doi.org/10.1186/gb-2004-5-10-r80), and updated as *SummarizedExperiment* in the [2015 publication](https://doi.org/10.1038/nmeth.3252). Such a data structure for annotated matrices is also implemented in for example, the [anndata](https://doi.org/10.21105/joss.04371) object in python. From the 2004 article:
+
+> ...low-level data are bridged to high-level analysis manipulations via the \[data\] structure. The designer of low-level processing software can focus on the creation of a \[dataset\] instance, and need not cater for any particular analysis data structure representation. The designer of analysis procedures can ignore low-level structures and processes, and operate directly on the \[data\] representation. This design is responsible for the ease of interoperation of ... key Bioconductor packages...
+
+The SE class has become the *de facto* standard in Bioconductor for storing annotated matrix-like data, and is used by many packages, including *DESeq2* and most single cell analysis packages.
 
 ```{r SE-overview, fig.align = 'center', out.width = "100%"}
 #| echo: false
@@ -87,20 +59,18 @@ knitr::include_graphics("figures/SE-overview.png")
 ```
 
 ::: callout-note
-### important
+### Important
 
-SE is widely used, but its functionality stems from other Bioconductor packages. A notable mention is `S4Vectors`:
+SE is widely used, but its functionality stems from other Bioconductor packages. A notable mention is *S4Vectors*:
 
--   provides a way to indicate your S4 object is "vector-like" (with the `Vector` virtual class) even if the underlying storage is not a vector.
+-   provides a way to indicate your S4 object is "vector-like" (with the *Vector* virtual class) even if the underlying storage is not a vector.
 -   provides a notation of size and subset generics.
--   provides a DFrame object. Like a data.frame, but columns can be any object inheriting from `Vector` (e.g. `GRanges`, `Rle`, etc.).
+-   provides a *DFrame* object. Like a *data.frame*, but columns can be any object inheriting from *Vector* (e.g. *GRanges*, *Rle*, etc.).
 :::
 
 ## What is the `tidyverse`?
 
-The `tidyverse` is a collection of R packages that specialize in providing users with consistant APIs for handeling their data.
-A non-exhaustive list of common `tidyverse` packages include `dplyr`, `tidyr`, and `ggplot2`.
-Each `tidyverse` package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.
+The `tidyverse` is a collection of R packages that specialize in providing users with consistant APIs for handeling their data. A non-exhaustive list of common `tidyverse` packages include `dplyr`, `tidyr`, and `ggplot2`. Each `tidyverse` package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.
 
 <!-- Include more examples of tidy data? -->
 
@@ -124,8 +94,7 @@ Like the `tidyverse`, `tidyomics` hosts many packages, and all of them aim to br
 
 For example, `tidySummarizedExperiment` defines methods from `dplyr`, `tidyr`, and `ggplot2` for the SummarizedExperiment class, allowing users to think about their SummarizedExperiment classes as a "long-form data.frame".
 
-Alternatively, some `tidyomics` packages will opt to only extend a niche part of the tidyverse.
-Such is the case for `plyranges` and `plyxp`, which focus on defining methods for `dplyr` for the `GenomicsRanges` and `SummarizedExperiment` packages respectively.
+Alternatively, some `tidyomics` packages will opt to only extend a niche part of the tidyverse. Such is the case for `plyranges` and `plyxp`, which focus on defining methods for `dplyr` for the `GenomicsRanges` and `SummarizedExperiment` packages respectively.
 
 ## What is "Tidy" Data?
 
@@ -216,8 +185,7 @@ assay(se2) <- counts
 # identical to those of the receiving  SummarizedExperiment object 'x'
 ```
 
--   Other such validity checks include comparison across *different
-    genome builds*.
+-   Other such validity checks include comparison across *different genome builds*.
 
 -   Errors triggered by metadata better than silent errors!
 
@@ -229,12 +197,9 @@ slotNames(se)
 methods(class = class(se)) |> head()
 ```
 
--   An advanced R/Bioconductor user should eventually learn these
-    methods, class/method inheritance.
+-   An advanced R/Bioconductor user should eventually learn these methods, class/method inheritance.
 
--   Not needed to explore or visualize data, or make basic data
-    summaries.
-
+-   Not needed to explore or visualize data, or make basic data summaries.
 
 ## Beginners know *dplyr* & *ggplot2*
 
@@ -305,14 +270,11 @@ se |>
 
 ## Efficient operation on SE with `plyxp`
 
--   Justin Landis (UNC BCB) noticed some opportunities for more
-    efficient operations.
+-   Justin Landis (UNC BCB) noticed some opportunities for more efficient operations.
 
--   Also, reduce ambiguity, allow multiple ways to access data across
-    context. Leveraging data masks from *rlang*.
+-   Also, reduce ambiguity, allow multiple ways to access data across context. Leveraging data masks from *rlang*.
 
--   Developed in Summer 2024: `plyxp`, stand-alone but also as a
-    *tidySummarizedExperiment* engine.
+-   Developed in Summer 2024: `plyxp`, stand-alone but also as a *tidySummarizedExperiment* engine.
 
 ![](figures/plyxp.png){fig-align="center"}
 
@@ -328,10 +290,8 @@ xp <- new_plyxp(se)
 xp |> class() |> getClass()
 ```
 
-::::: callout-note
-
-:::: columns
-
+:::::: callout-note
+::::: columns
 ::: {.column width="40%"}
 Unlike `tidySummarizedExperiment`, `plyxp` only extends `dplyr`. Thus you cannot pipe output from `plyxp` into `tidyr` or `ggplot2` ([*yet*]{.underline}). However you can always retrieve the underlying `SummarizedExperiment` object via the `se()` function.
 :::
@@ -341,29 +301,24 @@ Unlike `tidySummarizedExperiment`, `plyxp` only extends `dplyr`. Thus you cannot
 se(xp)
 ```
 :::
-::::
 :::::
+::::::
 
 ## Using `plyxp`
 
-`plyxp` is a stricter version of `tidySummarizedExperiment`.
-It's grammar reinforces the underlying structure of the `SummarizedExperiment` class.
-It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.
+`plyxp` is a stricter version of `tidySummarizedExperiment`. It's grammar reinforces the underlying structure of the `SummarizedExperiment` class. It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.
 
 ![A SummarizedExperiment has three evaluation contexts: the assays, rowData, and colData. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object and its bindings to three evaluation contexts: the assays, row-data, and col-data."}
 
 ## Using `plyxp` cont.
 
-`plyxp` allows optional access into the other contexts with special [**pronouns**]{.underline}.
-These will reshape the data for something convenient for the current context.
-There also exists special **\_asis** variants that do not reshape the data.
+`plyxp` allows optional access into the other contexts with special [**pronouns**]{.underline}. These will reshape the data for something convenient for the current context. There also exists special **\_asis** variants that do not reshape the data.
 
 ![Each context contains special pronouns that point to the other contexts. The special **\_asis** variants are not shown here. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object's three evaluation contexts and the pronouns within."}
 
 ## The Airway dataset
 
-Read counts from an RNA-seq experiment of airway smooth muscle cell lines.
-This is a `RangedSummarizedExperiment` which indicates genomic ranges are used.
+Read counts from an RNA-seq experiment of airway smooth muscle cell lines. This is a `RangedSummarizedExperiment` which indicates genomic ranges are used.
 
 ```{r load airway}
 library(airway)
@@ -383,9 +338,7 @@ colData(airway)
 We would typically use `rowData()`, but with a `RangedSummarizedExperiment` we should use `rowRanges()` if we want to query the information about the range data.
 :::
 
-
 ## airway with `plyxp`
-
 
 ```{r}
 airxp <- new_plyxp(airway)
@@ -419,7 +372,6 @@ airxp <- airxp |>
   )
 
 ```
-
 
 ```{r}
 airxp_sub <- airxp |>
@@ -531,7 +483,6 @@ airxp_sub |>
   guides(x = guide_axis(angle = 45))
 
 ```
-
 
 ```{r}
 
