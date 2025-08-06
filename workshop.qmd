@@ -4,7 +4,7 @@ title: "Tidyomics Workshop: Genomics Analysis"
 
 ## Introduction
 
-Welcome to the Tidyomics workshop! We will be exploring how to use `tidyomics` to perform common operations for analysis and visualization of genomics data.
+Welcome to the Tidyomics workshop! We will be exploring how to use _tidyomics_ to perform common operations for analysis and visualization of genomics data.
 
 Before we dive into the details, we will first talk about Bioconductor, the *tidyverse* and its connection to the *tidyomics* project.
 
@@ -68,15 +68,15 @@ SE is widely used, but its functionality stems from other Bioconductor packages.
 -   provides a *DFrame* object. Like a *data.frame*, but columns can be any object inheriting from *Vector* (e.g. *GRanges*, *Rle*, etc.).
 :::
 
-## What is the `tidyverse`?
+## What is the _tidyverse_?
 
-The `tidyverse` is a collection of R packages that specialize in providing users with consistant APIs for handeling their data. A non-exhaustive list of common `tidyverse` packages include `dplyr`, `tidyr`, and `ggplot2`. Each `tidyverse` package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.
+The _tidyverse_ is a collection of R packages that specialize in providing users with consistant APIs for handeling their data. A non-exhaustive list of common _tidyverse_ packages include _dplyr_, _tidyr_, and _ggplot2_. Each _tidyverse_ package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.
 
 <!-- Include more examples of tidy data? -->
 
-## What is `tidyomics`?
+## What is _tidyomics_?
 
-Like the `tidyverse`, the `tidyomics` project aims to bring the philosolpy of the `tidyverse` to the Omics focused packages within Bioconductor.
+Like the _tidyverse_, the _tidyomics_ project aims to bring the philosolpy of the _tidyverse_ to the Omics focused packages within Bioconductor.
 
 -   <https://github.com/tidyomics>
 -   [Announcement paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2)
@@ -88,13 +88,13 @@ Like the `tidyverse`, the `tidyomics` project aims to bring the philosolpy of th
 knitr::include_graphics("figures/tidyomics-workflow.png")
 ```
 
-## A brief overview of `tidyomics` in practice
+## A brief overview of _tidyomics_ in practice
 
-Like the `tidyverse`, `tidyomics` hosts many packages, and all of them aim to bring some "tidyverse" functionality to a Bioconductor package.
+Like the _tidyverse_, _tidyomics_ hosts many packages, and all of them aim to bring some "tidyverse" functionality to a Bioconductor package.
 
-For example, `tidySummarizedExperiment` defines methods from `dplyr`, `tidyr`, and `ggplot2` for the SummarizedExperiment class, allowing users to think about their SummarizedExperiment classes as a "long-form data.frame".
+For example, _tidySummarizedExperiment_ defines methods from _dplyr_, _tidyr_, and _ggplot2_ for the SummarizedExperiment class, allowing users to think about their SummarizedExperiment classes as a "long-form data.frame".
 
-Alternatively, some `tidyomics` packages will opt to only extend a niche part of the tidyverse. Such is the case for `plyranges` and `plyxp`, which focus on defining methods for `dplyr` for the `GenomicsRanges` and `SummarizedExperiment` packages respectively.
+Alternatively, some _tidyomics_ packages will opt to only extend a niche part of the tidyverse. Such is the case for `plyranges` and _plyxp_, which focus on defining methods for _dplyr_ for the `GenomicsRanges` and _SummarizedExperiment_ packages respectively.
 
 ## What is "Tidy" Data?
 
@@ -268,19 +268,19 @@ se |>
   geom_point(size=2) + geom_line() + facet_wrap(~.feature)
 ```
 
-## Efficient operation on SE with `plyxp`
+## Efficient operation on SE with _plyxp_
 
 -   Justin Landis (UNC BCB) noticed some opportunities for more efficient operations.
 
 -   Also, reduce ambiguity, allow multiple ways to access data across context. Leveraging data masks from *rlang*.
 
--   Developed in Summer 2024: `plyxp`, stand-alone but also as a *tidySummarizedExperiment* engine.
+-   Developed in Summer 2024: _plyxp_, stand-alone but also as a *tidySummarizedExperiment* engine.
 
 ![](figures/plyxp.png){fig-align="center"}
 
-## To use `plyxp`
+## To use _plyxp_
 
-Start by wraping any class inheriting from `SummarizedExperiment` with `plyxp`'s thin wrapper class:
+Start by wraping any class inheriting from _SummarizedExperiment_ with _plyxp_'s thin wrapper class:
 
 ```{r load and use plyxp}
 #| message: false
@@ -293,7 +293,7 @@ xp |> class() |> getClass()
 :::::: callout-note
 ::::: columns
 ::: {.column width="40%"}
-Unlike `tidySummarizedExperiment`, `plyxp` only extends `dplyr`. Thus you cannot pipe output from `plyxp` into `tidyr` or `ggplot2` ([*yet*]{.underline}). However you can always retrieve the underlying `SummarizedExperiment` object via the `se()` function.
+Unlike _tidySummarizedExperiment_, _plyxp_ only extends _dplyr_. Thus you cannot pipe output from _plyxp_ into _tidyr_ or _ggplot2_ ([*yet*]{.underline}). However you can always retrieve the underlying _SummarizedExperiment_ object via the `se()` function.
 :::
 
 ::: {.column width="60%"}
@@ -304,21 +304,21 @@ se(xp)
 :::::
 ::::::
 
-## Using `plyxp`
+## Using _plyxp_
 
-`plyxp` is a stricter version of `tidySummarizedExperiment`. It's grammar reinforces the underlying structure of the `SummarizedExperiment` class. It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.
+_plyxp_ is a stricter version of _tidySummarizedExperiment_. It's grammar reinforces the underlying structure of the _SummarizedExperiment_ class. It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.
 
 ![A SummarizedExperiment has three evaluation contexts: the assays, rowData, and colData. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object and its bindings to three evaluation contexts: the assays, row-data, and col-data."}
 
-## Using `plyxp` cont.
+## Using _plyxp_ cont.
 
-`plyxp` allows optional access into the other contexts with special [**pronouns**]{.underline}. These will reshape the data for something convenient for the current context. There also exists special **\_asis** variants that do not reshape the data.
+_plyxp_ allows optional access into the other contexts with special [**pronouns**]{.underline}. These will reshape the data for something convenient for the current context. There also exists special **\_asis** variants that do not reshape the data.
 
 ![Each context contains special pronouns that point to the other contexts. The special **\_asis** variants are not shown here. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object's three evaluation contexts and the pronouns within."}
 
 ## The Airway dataset
 
-Read counts from an RNA-seq experiment of airway smooth muscle cell lines. This is a `RangedSummarizedExperiment` which indicates genomic ranges are used.
+Read counts from an RNA-seq experiment of airway smooth muscle cell lines. This is a _RangedSummarizedExperiment_ which indicates genomic ranges are used.
 
 ```{r load airway}
 library(airway)
@@ -335,10 +335,10 @@ colData(airway)
 ```
 
 ::: callout-note
-We would typically use `rowData()`, but with a `RangedSummarizedExperiment` we should use `rowRanges()` if we want to query the information about the range data.
+We would typically use `rowData()`, but with a _RangedSummarizedExperiment_ we should use `rowRanges()` if we want to query the information about the range data.
 :::
 
-## airway with `plyxp`
+## airway with _plyxp_
 
 ```{r}
 airxp <- new_plyxp(airway)
