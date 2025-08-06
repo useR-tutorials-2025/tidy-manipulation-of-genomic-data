@@ -4,7 +4,7 @@ title: "Tidyomics Workshop: Genomics Analysis"
 
 ## Introduction
 
-Welcome to the Tidyomics workshop! We will be exploring how to use _tidyomics_ to perform common operations for analysis and visualization of genomics data.
+Welcome to the Tidyomics workshop! We will be exploring how to use *tidyomics* to perform common operations for analysis and visualization of genomics data.
 
 Before we dive into the details, we will first talk about Bioconductor, the *tidyverse* and its connection to the *tidyomics* project.
 
@@ -68,19 +68,19 @@ SE is widely used, but its functionality stems from other Bioconductor packages.
 -   provides a *DFrame* object. Like a *data.frame*, but columns can be any object inheriting from *Vector* (e.g. *GRanges*, *Rle*, etc.).
 :::
 
-## What is the _tidyverse_?
+## What is the *tidyverse*?
 
-The _tidyverse_ is a collection of R packages that specialize in providing users with consistant APIs for handeling their data. A non-exhaustive list of common _tidyverse_ packages include _dplyr_, _tidyr_, and _ggplot2_. Each _tidyverse_ package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.
+The *tidyverse* is a collection of R packages that specialize in providing users with consistant APIs for handeling their data. A non-exhaustive list of common *tidyverse* packages include *dplyr*, *tidyr*, and *ggplot2*. Each *tidyverse* package tends to focus on solving one problem and will offer a set of consistent APIs for their use cases.
 
 <!-- Include more examples of tidy data? -->
 
-## What is _tidyomics_?
+## What is *tidyomics*?
 
-Like the _tidyverse_, the _tidyomics_ project aims to bring the philosolpy of the _tidyverse_ to the Omics focused packages within Bioconductor.
+Like the *tidyverse*, the *tidyomics* project aims to bring the philosolpy of the *tidyverse* to the Omics focused packages within Bioconductor.
 
--   <https://github.com/tidyomics>
--   [Announcement paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2)
--   `#tidiness_in_bioc` channel in the `community-bioc` Zulip
+-   <https://github.com/tidyomics> - the main website
+-   [Announcement paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2) posted in 2023
+-   `#tidiness_in_bioc` channel in the `community-bioc` Zulip (like Slack)
 
 ```{r tidyomics workflow goal}
 #| echo: false
@@ -88,13 +88,13 @@ Like the _tidyverse_, the _tidyomics_ project aims to bring the philosolpy of th
 knitr::include_graphics("figures/tidyomics-workflow.png")
 ```
 
-## A brief overview of _tidyomics_ in practice
+## A brief overview of *tidyomics* in practice
 
-Like the _tidyverse_, _tidyomics_ hosts many packages, and all of them aim to bring some "tidyverse" functionality to a Bioconductor package.
+Like the *tidyverse*, *tidyomics* hosts many packages, and all of them aim to bring some "tidyverse" functionality to a Bioconductor package.
 
-For example, _tidySummarizedExperiment_ defines methods from _dplyr_, _tidyr_, and _ggplot2_ for the SummarizedExperiment class, allowing users to think about their SummarizedExperiment classes as a "long-form data.frame".
+For example, *tidySummarizedExperiment* defines methods from *dplyr*, *tidyr*, and *ggplot2* for the *SummarizedExperiment* class, allowing users to think about their *SummarizedExperiment* objects as a "long-form *data.frame*".
 
-Alternatively, some _tidyomics_ packages will opt to only extend a niche part of the tidyverse. Such is the case for `plyranges` and _plyxp_, which focus on defining methods for _dplyr_ for the `GenomicsRanges` and _SummarizedExperiment_ packages respectively.
+Alternatively, some *tidyomics* packages will opt to only extend a niche part of the *tidyverse*. Such is the case for *plyranges* and *plyxp*, which focus on defining methods for *dplyr* for the *GenomicRanges* and *SummarizedExperiment* packages respectively.
 
 ## What is "Tidy" Data?
 
@@ -102,11 +102,15 @@ Alternatively, some _tidyomics_ packages will opt to only extend a niche part of
 knitr::include_graphics("figures/tidy-style.png")
 ```
 
+[Tidy Data](https://r4ds.had.co.nz/tidy-data.html)
+
+Note that:
+
 -   One row per observation, one column per variable.
 -   Genomic regions (BED) already in this format.
 -   [Matrices and annotated matrices are not]{.underline}.
 
-## SummarizedExperiments
+## *SummarizedExperiment* objects
 
 ```{r library SummarizedExpierment}
 #| message: false
@@ -159,6 +163,10 @@ se <- SummarizedExperiment(
 se
 ```
 
+::: callout-note
+Try to assess the `assay()`, `rowData()` and `colData()` of the `se` object.
+:::
+
 ## Deals with bookkeeping issues
 
 Reordering columns propagates to `assay` and `colData`:
@@ -185,7 +193,7 @@ assay(se2) <- counts
 # identical to those of the receiving  SummarizedExperiment object 'x'
 ```
 
--   Other such validity checks include comparison across *different genome builds*.
+-   Other such validity checks include comparison across *different reference genome versions*.
 
 -   Errors triggered by metadata better than silent errors!
 
@@ -268,19 +276,19 @@ se |>
   geom_point(size=2) + geom_line() + facet_wrap(~.feature)
 ```
 
-## Efficient operation on SE with _plyxp_
+## Efficient operation on SE with *plyxp*
 
 -   Justin Landis (UNC BCB) noticed some opportunities for more efficient operations.
 
 -   Also, reduce ambiguity, allow multiple ways to access data across context. Leveraging data masks from *rlang*.
 
--   Developed in Summer 2024: _plyxp_, stand-alone but also as a *tidySummarizedExperiment* engine.
+-   Developed in Summer 2024: *plyxp*, stand-alone but also as a *tidySummarizedExperiment* engine.
 
 ![](figures/plyxp.png){fig-align="center"}
 
-## To use _plyxp_
+## To use *plyxp*
 
-Start by wraping any class inheriting from _SummarizedExperiment_ with _plyxp_'s thin wrapper class:
+Start by wraping any class inheriting from *SummarizedExperiment* with *plyxp*'s thin wrapper class:
 
 ```{r load and use plyxp}
 #| message: false
@@ -293,7 +301,7 @@ xp |> class() |> getClass()
 :::::: callout-note
 ::::: columns
 ::: {.column width="40%"}
-Unlike _tidySummarizedExperiment_, _plyxp_ only extends _dplyr_. Thus you cannot pipe output from _plyxp_ into _tidyr_ or _ggplot2_ ([*yet*]{.underline}). However you can always retrieve the underlying _SummarizedExperiment_ object via the `se()` function.
+Unlike *tidySummarizedExperiment*, *plyxp* only extends *dplyr*. Thus you cannot pipe output from *plyxp* into *tidyr* or *ggplot2* ([*yet*]{.underline}). However you can always retrieve the underlying *SummarizedExperiment* object via the `se()` function.
 :::
 
 ::: {.column width="60%"}
@@ -304,41 +312,43 @@ se(xp)
 :::::
 ::::::
 
-## Using _plyxp_
+## Using *plyxp*
 
-_plyxp_ is a stricter version of _tidySummarizedExperiment_. It's grammar reinforces the underlying structure of the _SummarizedExperiment_ class. It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.
+*plyxp* is a stricter version of *tidySummarizedExperiment*. It's grammar reinforces the underlying structure of the *SummarizedExperiment* class. It provides evaluation contexts that allow the user to specify where and how expressions are evaluated.
 
 ![A SummarizedExperiment has three evaluation contexts: the assays, rowData, and colData. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object and its bindings to three evaluation contexts: the assays, row-data, and col-data."}
 
-## Using _plyxp_ cont.
+## Using *plyxp* cont.
 
-_plyxp_ allows optional access into the other contexts with special [**pronouns**]{.underline}. These will reshape the data for something convenient for the current context. There also exists special **\_asis** variants that do not reshape the data.
+*plyxp* allows optional access into the other contexts with special [**pronouns**]{.underline}. These will reshape the data for something convenient for the current context. There also exists special **\_asis** variants that do not reshape the data.
 
 ![Each context contains special pronouns that point to the other contexts. The special **\_asis** variants are not shown here. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object's three evaluation contexts and the pronouns within."}
 
-## The Airway dataset
+## The "airway" dataset
 
-Read counts from an RNA-seq experiment of airway smooth muscle cell lines. This is a _RangedSummarizedExperiment_ which indicates genomic ranges are used.
+We have a matrix of count data from an RNA-seq experiment of airway smooth muscle cell lines. The counts reflect detected RNA copies of a gene (row) across different samples (column). This is a *RangedSummarizedExperiment* which indicates genomic ranges are used.
 
 ```{r load airway}
 library(airway)
 data(airway)
-dimnames(assay(airway, "counts")) <- dimnames(airway)
 airway
+```
+
+We now have a quick suggested clean-up of the dataset, peculiar to `airway`. Please run these two lines of code, which clean up metadata in the object.
+
+```{r cleanup}
+dimnames(assay(airway, "counts")) <- dimnames(airway)
+rowRanges(airway) <- NULL # ignore ranges here
 ```
 
 The columns are our 8 samples, and the rows are the genes.
 
 ```{r show airway metadata}
-rowRanges(airway)  # pipe this output to mcols() for more data!
+rowData(airway)
 colData(airway)
 ```
 
-::: callout-note
-We would typically use `rowData()`, but with a _RangedSummarizedExperiment_ we should use `rowRanges()` if we want to query the information about the range data.
-:::
-
-## airway with _plyxp_
+## airway with *plyxp*
 
 ```{r}
 airxp <- new_plyxp(airway)
@@ -351,14 +361,24 @@ airxp |>
   guides(x = guide_axis(angle = 45))
 ```
 
-A common operation is to calculate the RPKM (Reads Per Kilobase of transcript, per Million mapped reads) or TPM (Transcripts Per Million) values for each gene in each sample.
+::: callout-note
+Try to subset the object to the samples with `dex` variable (on the samples) equal to `trt`. Try this both with base Bioconductor `[,]` or with *plyxp* code.
+:::
+
+A common operation is to calculate the RPKM (Reads Per Kilobase of transcript, per Million mapped reads) or TPM (Transcripts Per Million) values for each gene in each sample. This can be computed by dividing the counts by the column sum, dividing out gene length, and ensuring the columns sum to 1 million.
+
+We can compute this in several steps below, and then compute the row mean of this new computed matrix.
+
+::: callout-note
+Try the following code one piece at a time, e.g. first just the `mutate()`, etc.
+:::
 
 ```{r}
 airxp <- airxp |>
   mutate(
     rows(
-      # get a gene length per gene
-      len = gene_seq_end - gene_seq_start + 1
+      # get a gene length per gene (not correct biologically but ok for here)
+      len = gene_seq_end - gene_seq_start + 1 # includes introns
     ),
     # calculate RPKM per gene and sample count
     RPK = counts / (.rows$len / 1e3),
@@ -393,6 +413,10 @@ airxp_sub |>
 
 Attempt to find the top 100 genes that have the greatest change between "trt" and "untrt" within each cell.
 
+::: callout-note
+Try the following chunk up to but not including the first `mutate()`.
+:::
+
 ```{r}
 top_100_genes <- airxp_sub |>
   group_by(
@@ -418,12 +442,14 @@ top_100_genes <- airxp_sub |>
 ```
 
 ```{r}
+top_6 <- head(top_100_genes, 6)
 airxp_sub |>
-  filter(rows(gene_id %in% top_100_genes)) |>
+  filter(rows(gene_id %in% top_6)) |>
   se() |>
-  ggplot(aes(x = cell, y = log1p(counts), fill = dex)) +
-  geom_boxplot() +
-  guides(x = guide_axis(angle = 45))
+  ggplot(aes(x = dex, y = log1p(counts), group = cell)) +
+  geom_point() + 
+  geom_line() + 
+  facet_wrap(~.feature)
 ```
 
 It is common for a user to visualize data with a heatmap. We can create a function that will cluster the rows and columns of a summarized expeirment based on the values in a given assay name.
@@ -481,15 +507,4 @@ airxp_sub |>
   ggplot(aes(x = samples, y = features, fill = log1p(TPM))) +
   geom_tile() +
   guides(x = guide_axis(angle = 45))
-
-```
-
-```{r}
-
-airxp_sub |>
-  se() |>
-  ggplot(aes(x = cell, y = log1p(TPM), fill = dex)) +
-  geom_boxplot() +
-  guides(x = guide_axis(angle = 45))
-
 ```
