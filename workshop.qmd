@@ -299,19 +299,13 @@ xp <- new_plyxp(se)
 xp |> class() |> getClass()
 ```
 
-:::::: callout-note
-::::: columns
-::: {.column width="40%"}
+::: callout-note
 Unlike *tidySummarizedExperiment*, *plyxp* only extends *dplyr*. Thus you cannot pipe output from *plyxp* into *tidyr* or *ggplot2* ([*yet*]{.underline}). However you can always retrieve the underlying *SummarizedExperiment* object via the `se()` function.
-:::
 
-::: {.column width="60%"}
 ```{r plyxp get se}
 se(xp)
 ```
-:::
-:::::
-::::::
+
 
 ## Using *plyxp*
 
