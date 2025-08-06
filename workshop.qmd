@@ -443,7 +443,7 @@ rowData(airxp_ave)["ave"]
 ```{r}
 top_100_genes <- airxp_ave |>
   arrange(rows(-ave)) |>
-  plyxp(\(x) x[1:100,]) |>
+  _[1:100,]) |>
   pull(rows(gene_id))
 ```
 
