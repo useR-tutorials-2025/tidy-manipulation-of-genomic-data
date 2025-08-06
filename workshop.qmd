@@ -513,13 +513,17 @@ cluster_xp <- function(xp, assay, rows_k = NULL, cols_k = NULL) {
    )
   if (!is.null(rows_k)) {
     xp <- xp |>
-      group_by(rows(row_cluster = factor(cutree(row_hc, k = rows_k))),
-        .add = TRUE)
+      group_by(
+        rows(row_cluster = factor(cutree(row_hc, k = rows_k))),
+        .add = TRUE
+      )
   }
   if (!is.null(cols_k)) {
     xp <- xp |>
-      group_by(cols(col_cluster = factor(cutree(col_hc, k = cols_k))),
-        .add = TRUE)
+      group_by(
+        cols(col_cluster = factor(cutree(col_hc, k = cols_k))),
+        .add = TRUE
+      )
   }
   xp
 }
