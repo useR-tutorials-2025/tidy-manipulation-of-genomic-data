@@ -392,6 +392,11 @@ airxp <- airxp |>
 
 ```
 
+::: callout-note
+### TPM column Sum
+Try to verify that the TPM values sum to 1 million for each sample.
+:::
+
 ```{r}
 airxp_sub <- airxp |>
   filter(
@@ -443,7 +448,7 @@ rowData(airxp_ave)["ave"]
 ```{r}
 top_100_genes <- airxp_ave |>
   arrange(rows(-ave)) |>
-  _[1:100,]) |>
+  _[1:100,] |>
   pull(rows(gene_id))
 ```
 
@@ -455,7 +460,7 @@ For example:
 
 ```{r}
 airxp_sub |>
-  arrange(cols(dex, cell)) |> 
+  arrange(cols(dex, cell)) |>
   colData()
 ```
 
@@ -482,8 +487,8 @@ airxp_sub |>
   filter(rows(gene_id %in% top_6)) |>
   se() |>
   ggplot(aes(x = dex, y = log1p(counts), group = cell)) +
-  geom_point() + 
-  geom_line() + 
+  geom_point() +
+  geom_line() +
   facet_wrap(~.feature)
 ```
 
@@ -542,6 +547,6 @@ airxp_sub |>
   se() |>
   ggplot(aes(x = samples, y = features, fill = log1p(TPM))) +
   geom_tile() +
-  guides(x = guide_axis(angle = 45)) + 
+  guides(x = guide_axis(angle = 45)) +
   scale_y_discrete(labels = NULL)
 ```
