@@ -102,7 +102,7 @@ Alternatively, some *tidyomics* packages will opt to only extend a niche part of
 knitr::include_graphics("figures/tidy-style.png")
 ```
 
-[Tidy Data](https://r4ds.had.co.nz/tidy-data.html)
+See the description here: [Tidy Data](https://r4ds.had.co.nz/tidy-data.html)
 
 Note that:
 
@@ -164,6 +164,7 @@ se
 ```
 
 ::: callout-note
+### Example
 Try to assess the `assay()`, `rowData()` and `colData()` of the `se` object.
 :::
 
@@ -242,7 +243,7 @@ se
 ```
 
 ::: callout-note
-calling `print(se)` even after restoring `show()` will still use the "tibble-abstraction"!
+Calling `print(se)` even after restoring `show()` will still use the "tibble-abstraction"!
 :::
 
 ## The API
@@ -328,6 +329,8 @@ se(xp)
 
 We have a matrix of count data from an RNA-seq experiment of airway smooth muscle cell lines. The counts reflect detected RNA copies of a gene (row) across different samples (column). This is a *RangedSummarizedExperiment* which indicates genomic ranges are used.
 
+The most important pieces of metadata we will examine are `cell`, which indicates the human donor, and `dex` which indicates which samples are treated with a compound or untreated. The `gene_biotype` metadata variable gives us some minimal information about the gene function.
+
 ```{r load airway}
 library(airway)
 data(airway)
@@ -362,6 +365,7 @@ airxp |>
 ```
 
 ::: callout-note
+### Example
 Try to subset the object to the samples with `dex` variable (on the samples) equal to `trt`. Try this both with base Bioconductor `[,]` or with *plyxp* code.
 :::
 
@@ -370,6 +374,7 @@ A common operation is to calculate the RPKM (Reads Per Kilobase of transcript, p
 We can compute this in several steps below, and then compute the row mean of this new computed matrix.
 
 ::: callout-note
+### Example
 Try the following code one piece at a time, e.g. first just the `mutate()`, etc.
 :::
 
@@ -414,11 +419,12 @@ airxp_sub |>
 Attempt to find the top 100 genes that have the greatest change between "trt" and "untrt" within each cell.
 
 ::: callout-note
+### Example
 Try the following chunk up to but not including the first `mutate()`.
 :::
 
 ```{r}
-top_100_genes <- airxp_sub |>
+airxp_ave <- airxp_sub |>
   group_by(
     # do not need to group_by rows(gene_id) ...
     # this will create ~ 17,000 additional groups per row!
@@ -435,10 +441,45 @@ top_100_genes <- airxp_sub |>
     # for each gene, find the mean absolute diff across
     # all cells
     rows(ave = rowMeans(.assays_asis$abs_diff))
-  ) |>
+  )
+
+rowData(airxp_ave)["ave"]
+```
+
+```{r}
+top_100_genes <- airxp_ave |>
   arrange(rows(-ave)) |>
   plyxp(\(x) x[1:100,]) |>
   pull(rows(gene_id))
+```
+
+The grouping is very powerful functionality here.
+
+Another way to accomplish this computation would involve arranging the matrices by sample, but this puts more responsibility on the user to ensure values are arranged properly.
+
+For example:
+
+```{r}
+airxp_sub |>
+  arrange(cols(dex, cell)) |> 
+  colData()
+```
+
+```{r}
+airxp_arr <- airxp_sub |>
+  arrange(cols(dex, cell))
+
+airxp_arr_ave <- airxp_arr |>
+  mutate(
+    rows(
+      ave = rowMeans(abs(
+        .assays_asis$counts[, 1:4] -
+          .assays_asis$counts[, 5:8]
+      ))
+    )
+  )
+
+rowData(airxp_arr_ave)["ave"]
 ```
 
 ```{r}
@@ -495,7 +536,8 @@ airxp_sub |>
   viridis::scale_fill_viridis() +
   guides(x = guide_axis(angle = 45)) +
   facet_grid(rows = vars(row_cluster),
-   cols = vars(col_cluster), scales = "free", space = "free")
+   cols = vars(col_cluster), scales = "free", space = "free") +
+  scale_y_discrete(labels = NULL)
 
 ```
 
@@ -506,5 +548,6 @@ airxp_sub |>
   se() |>
   ggplot(aes(x = samples, y = features, fill = log1p(TPM))) +
   geom_tile() +
-  guides(x = guide_axis(angle = 45))
+  guides(x = guide_axis(angle = 45)) + 
+  scale_y_discrete(labels = NULL)
 ```
