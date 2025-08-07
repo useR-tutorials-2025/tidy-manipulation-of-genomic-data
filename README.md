@@ -6,7 +6,7 @@ This tutorial is meant to be run with Bioconductor Version 3.21.
 Required packages include:
 
 * `tidySummarizedExperiment`
-* `plyxp` (v 1.2.5)
+* `plyxp` (v 1.2.7)
 * `dplyr`
 * `ggplot2`
 
