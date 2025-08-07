@@ -305,6 +305,7 @@ Unlike *tidySummarizedExperiment*, *plyxp* only extends *dplyr*. Thus you cannot
 ```{r plyxp get se}
 se(xp)
 ```
+:::
 
 
 ## Using *plyxp*
@@ -347,7 +348,7 @@ colData(airway)
 
 ## airway with *plyxp*
 
-```{r}
+```{r boxplot of cells and treatment}
 airxp <- new_plyxp(airway)
 airxp
 
@@ -372,7 +373,7 @@ We can compute this in several steps below, and then compute the row mean of thi
 Try the following code one piece at a time, e.g. first just the `mutate()`, etc.
 :::
 
-```{r}
+```{r compute TPM}
 airxp <- airxp |>
   mutate(
     rows(
@@ -397,7 +398,7 @@ airxp <- airxp |>
 Try to verify that the TPM values sum to 1 million for each sample.
 :::
 
-```{r}
+```{r plot boxplot filter}
 airxp_sub <- airxp |>
   filter(
     rows(
@@ -422,7 +423,7 @@ Attempt to find the top 100 genes that have the greatest change between "trt" an
 Try the following chunk up to but not including the first `mutate()`.
 :::
 
-```{r}
+```{r find diff between treatment groups}
 airxp_ave <- airxp_sub |>
   group_by(
     # do not need to group_by rows(gene_id) ...
@@ -445,7 +446,7 @@ airxp_ave <- airxp_sub |>
 rowData(airxp_ave)["ave"]
 ```
 
-```{r}
+```{r top 100 genes}
 top_100_genes <- airxp_ave |>
   arrange(rows(-ave)) |>
   _[1:100,] |>
@@ -458,13 +459,13 @@ Another way to accomplish this computation would involve arranging the matrices 
 
 For example:
 
-```{r}
+```{r ex arrange and colData}
 airxp_sub |>
   arrange(cols(dex, cell)) |>
   colData()
 ```
 
-```{r}
+```{r ex arrange and ave}
 airxp_arr <- airxp_sub |>
   arrange(cols(dex, cell))
 
@@ -481,7 +482,7 @@ airxp_arr_ave <- airxp_arr |>
 rowData(airxp_arr_ave)["ave"]
 ```
 
-```{r}
+```{r line plot of top 6 genes}
 top_6 <- head(top_100_genes, 6)
 airxp_sub |>
   filter(rows(gene_id %in% top_6)) |>
@@ -494,7 +495,13 @@ airxp_sub |>
 
 It is common for a user to visualize data with a heatmap. We can create a function that will cluster the rows and columns of a summarized expeirment based on the values in a given assay name.
 
-```{r}
+```{r ex cluster function with plyxp internal}
+#' Cluster rows and columns of a plyxp object based on an assay
+#' @param xp A plyxp object
+#' @param assay a unquoted name of an assay to use for clustering
+#' @param rows_k number of row clusters to create (optional)
+#' @param cols_k number of column clusters to create (optional)
+#' @return A plyxp object with rows ordered by rows(features) and cols(samples). optional groupings assigned to rows(row_cluster) and cols(col_cluster).
 cluster_xp <- function(xp, assay, rows_k = NULL, cols_k = NULL) {
   assay_val <- pull(xp, {{ assay }})
   row_hc <- hclust(dist(assay_val))
@@ -529,7 +536,7 @@ cluster_xp <- function(xp, assay, rows_k = NULL, cols_k = NULL) {
 }
 ```
 
-```{r}
+```{r heatmap of top 100 genes clustered by counts}
 airxp_sub |>
   filter(rows(gene_id %in% top_100_genes)) |>
   cluster_xp(counts, rows_k = 4, cols_k = 3) |>
@@ -544,13 +551,14 @@ airxp_sub |>
 
 ```
 
-```{r}
+```{r heatmap of top 100 genes clustered by TPM}
 airxp_sub |>
   filter(rows(gene_id %in% top_100_genes)) |>
   cluster_xp(TPM) |>
   se() |>
   ggplot(aes(x = samples, y = features, fill = log1p(TPM))) +
   geom_tile() +
+  viridis::scale_fill_viridis() +
   guides(x = guide_axis(angle = 45)) +
   scale_y_discrete(labels = NULL)
 ```
