@@ -318,7 +318,7 @@ se(xp)
 
 *plyxp* allows optional access into the other contexts with special [**pronouns**]{.underline}. These will reshape the data for something convenient for the current context. There also exists special **\_asis** variants that do not reshape the data.
 
-![Each context contains special pronouns that point to the other contexts. The special **\_asis** variants are not shown here. Figure made with [BioRender](BioRender.com)](figures/plyxp-bindings.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object's three evaluation contexts and the pronouns within."}
+![Each context contains special pronouns that point to the other contexts. The special **\_asis** variants are not shown here. Figure made with [BioRender](BioRender.com)](figures/plyxp-pronouns.png){fig-align="center" fig-alt="A depiction of a SummarizedExperiment object's three evaluation contexts and the pronouns within."}
 
 ## The "airway" dataset
 
