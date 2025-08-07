@@ -9,6 +9,7 @@ Required packages include:
 * `plyxp` (v 1.2.7)
 * `dplyr`
 * `ggplot2`
+* `airway`
 
 
 ## Package Installation
@@ -27,6 +28,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 }
 BiocManager::install("tidySummarizedExperiment")
+BiocManager::install("airway")
 ```
 
 Other tidyverse packages may be installed along side of `tidySummarizedExperiment`, but please ensure you have at least `dplyr` and `ggplot2` installed.
