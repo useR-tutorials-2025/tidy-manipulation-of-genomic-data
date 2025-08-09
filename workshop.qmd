@@ -332,10 +332,12 @@ data(airway)
 airway
 ```
 
-We now have a quick suggested clean-up of the dataset, peculiar to `airway`. Please run these two lines of code, which clean up metadata in the object.
+We now have a quick suggested clean-up of the dataset, peculiar to `airway`. Please run the following lines of code, which clean up metadata in the object.
 
 ```{r cleanup}
 dimnames(assay(airway, "counts")) <- dimnames(airway)
+# save the exonic length (sum of reduced exon width...)
+rowData(airway)$exonic_length <- sum(width(reduce(rowRanges(airway))))
 rowRanges(airway) <- NULL # ignore ranges here
 ```
 
@@ -370,24 +372,21 @@ We can compute this in several steps below, and then compute the row mean of thi
 
 ::: callout-note
 ### Example
-Try the following code one piece at a time, e.g. first just the `mutate()`, etc.
+Try the following code one piece at a time, e.g. first the `rows()` operation adding gene lengths, etc.
 :::
 
 ```{r compute TPM}
 airxp <- airxp |>
   mutate(
-    rows(
-      # get a gene length per gene (not correct biologically but ok for here)
-      len = gene_seq_end - gene_seq_start + 1 # includes introns
-    ),
-    # calculate RPKM per gene and sample count
-    RPK = counts / (.rows$len / 1e3),
+    # calculate read count per kilobase of gene length (sum of exons)
+    RPK = counts / (.rows$exonic_length / 1e3),
     cols(
-      # calculate a scaling factor for each sample
+      # calculate a scale factor for each sample (column sum)
       scale_factor = colSums(.assays_asis$RPK) / 1e6
     ),
-    # scale TMP by scaling factor
+    # calculate transcript count per million (TPM) by dividing out scale factor
     TPM = RPK / .cols$scale_factor,
+    # calculate the mean of the new scaled TPM values per gene
     rows(gene_scaled_means = rowMeans(.assays_asis$TPM))
   )
 
